@@ -52,18 +52,13 @@ export function PublicHeader() {
         <div className="flex items-center justify-between h-20">
           
           {/* Brand Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 rounded-xl bg-red-600 flex items-center justify-center text-white font-black text-xl shadow-md shadow-red-600/20 group-hover:scale-105 transition-transform">
-              KE
-            </div>
-            <div className="flex flex-col">
-              <span className="text-xl font-black tracking-tight text-slate-900 group-hover:text-red-600 transition-colors">
-                KE MOTORS
-              </span>
-              <span className="text-[10px] font-bold text-slate-400 tracking-wider uppercase">
-                Verified Marketplace
-              </span>
-            </div>
+          <Link href="/" className="flex items-center group py-1" aria-label="KE Motors Home">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/assets/images/KE_logoB.png"
+              alt="KE Motors"
+              className="h-14 sm:h-16 w-auto object-contain group-hover:scale-105 transition-transform"
+            />
           </Link>
 
           {/* Desktop Navigation */}

@@ -9,13 +9,13 @@ export function PublicFooter() {
           
           {/* Brand & Slogan */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <div className="w-9 h-9 rounded-xl bg-red-600 flex items-center justify-center text-white font-black text-lg shadow-md shadow-red-600/30">
-                KE
-              </div>
-              <span className="text-xl font-black text-white tracking-tight">
-                KE MOTORS
-              </span>
+            <div className="flex items-center">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/assets/images/KE_logoB.png"
+                alt="KE Motors"
+                className="h-14 sm:h-16 w-auto object-contain brightness-110"
+              />
             </div>
             <p className="text-sm text-slate-400 leading-relaxed">
               Verified vehicles.<br />

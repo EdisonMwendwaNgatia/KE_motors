@@ -77,10 +77,13 @@ export default function AdminLoginPage() {
 
       <div className="relative w-full max-w-md bg-zinc-900/90 border border-zinc-800/90 rounded-3xl p-8 shadow-2xl backdrop-blur-xl space-y-6">
         {/* Brand Header */}
-        <div className="text-center space-y-2">
-          <div className="inline-flex w-14 h-14 rounded-2xl bg-gradient-to-tr from-red-600 via-amber-500 to-red-500 items-center justify-center font-black text-2xl text-white shadow-xl shadow-red-900/40 mb-2">
-            KE
-          </div>
+        <div className="text-center space-y-2 flex flex-col items-center">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/assets/images/KE_logoB.png"
+            alt="KE Motors Logo"
+            className="h-14 w-auto object-contain mb-1"
+          />
           <h1 className="text-2xl font-black tracking-tight text-white">KE MOTORS</h1>
           <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest">
             Dealership Administration Portal

@@ -52,10 +52,13 @@ export function AdminLayoutClient({ children, userEmail, userRole }: AdminLayout
       <aside className="hidden md:flex flex-col w-64 bg-zinc-900 border-r border-zinc-800 flex-shrink-0">
         {/* Brand Logo Header */}
         <div className="p-6 border-b border-zinc-800 flex items-center justify-between">
-          <Link href="/admin/dashboard" className="flex items-center gap-2 group">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-red-600 via-amber-500 to-red-500 flex items-center justify-center font-black text-white shadow-lg shadow-red-900/30">
-              KE
-            </div>
+          <Link href="/admin/dashboard" className="flex items-center gap-2.5 group">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/assets/images/KE_logoB.png"
+              alt="KE Motors Logo"
+              className="h-9 w-auto object-contain brightness-110 group-hover:scale-105 transition-transform"
+            />
             <div>
               <span className="font-extrabold text-lg tracking-wider bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
                 KE MOTORS
@@ -120,9 +123,12 @@ export function AdminLayoutClient({ children, userEmail, userRole }: AdminLayout
       {/* Mobile Top Header */}
       <div className="md:hidden flex items-center justify-between p-4 bg-zinc-900 border-b border-zinc-800 sticky top-0 z-40">
         <Link href="/admin/dashboard" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-red-600 flex items-center justify-center font-black text-white text-xs">
-            KE
-          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/assets/images/KE_logoB.png"
+            alt="KE Motors Logo"
+            className="h-8 w-auto object-contain"
+          />
           <span className="font-extrabold text-base tracking-wider text-white">KE MOTORS</span>
         </Link>
         <button

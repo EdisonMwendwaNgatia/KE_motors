@@ -1,7 +1,4 @@
--- Enable Row Level Security on inquiries table
-ALTER TABLE public.inquiries ENABLE ROW LEVEL SECURITY;
-
--- Drop existing insert policy if any
+-- Drop existing policies if any
 DROP POLICY IF EXISTS "Allow public insert inquiries" ON public.inquiries;
 DROP POLICY IF EXISTS "Allow admin full access inquiries" ON public.inquiries;
 
