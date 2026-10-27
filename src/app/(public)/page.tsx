@@ -3,7 +3,8 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { VehicleCard } from '@/components/public/VehicleCard';
 import { Vehicle } from '@/types/database';
-import { formatWhatsAppUrl } from '@/lib/formatters';
+import { WHATSAPP_GROUP_URL } from '@/lib/formatters';
+import { MobileSearchDisclosure } from '@/components/public/MobileSearchDisclosure';
 
 export const metadata = {
   title: 'KE Motors — Find Your Next Car With Confidence',
@@ -77,7 +78,7 @@ export default async function HomePage() {
     };
   });
 
-  const whatsAppUrl = formatWhatsAppUrl('+254700000000', undefined);
+  const whatsAppUrl = WHATSAPP_GROUP_URL;
 
   return (
     <div className="space-y-16 pb-20">
@@ -89,10 +90,6 @@ export default async function HomePage() {
             
             {/* Hero Left Text & Search */}
             <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-red-50 border border-red-200 text-red-600 text-xs font-black uppercase tracking-wider">
-                <span className="w-2 h-2 rounded-full bg-red-600 animate-ping"></span>
-                KE MOTORS
-              </div>
 
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-tight">
                 Find Your Next Car <br className="hidden sm:inline" />
@@ -128,8 +125,9 @@ export default async function HomePage() {
 
               {/* Hero Search Box */}
               <div className="pt-6">
-                <div className="bg-white rounded-3xl border border-slate-200 p-4 sm:p-6 shadow-xl space-y-4">
-                  <div className="text-xs font-black text-slate-900 uppercase tracking-wider text-left border-b border-slate-100 pb-2">
+                <MobileSearchDisclosure>
+                <div className="mt-3 sm:mt-0 bg-white rounded-3xl border border-slate-200 p-4 sm:p-6 shadow-xl space-y-4">
+                  <div className="hidden sm:block text-xs font-black text-slate-900 uppercase tracking-wider text-left border-b border-slate-100 pb-2">
                     Quick Vehicle Search
                   </div>
                   
@@ -187,12 +185,13 @@ export default async function HomePage() {
                     </div>
                   </form>
                 </div>
+                </MobileSearchDisclosure>
               </div>
 
             </div>
 
             {/* Hero Right Visual */}
-            <div className="lg:col-span-5 relative">
+            <div className="hidden lg:block lg:col-span-5 relative">
               <div className="relative mx-auto max-w-md lg:max-w-none">
                 <div className="relative aspect-4/3 rounded-3xl overflow-hidden shadow-2xl border-4 border-white bg-slate-200">
                   {/* High quality Hero Vehicle Image */}
@@ -214,7 +213,7 @@ export default async function HomePage() {
                 </div>
 
                 {/* Floating Stat Card */}
-                <div className="absolute -bottom-6 -left-4 sm:-left-6 bg-white p-4 rounded-2xl border border-slate-200 shadow-xl flex items-center gap-3">
+                <div className="absolute -top-6 -left-4 sm:-left-6 bg-white p-4 rounded-2xl border border-slate-200 shadow-xl flex items-center gap-3">
                   <div className="w-12 h-12 rounded-xl bg-red-50 text-red-600 font-black text-xl flex items-center justify-center">
                     100%
                   </div>
@@ -280,33 +279,33 @@ export default async function HomePage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white rounded-3xl border border-slate-200 p-8 shadow-xs hover:shadow-md transition">
-              <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 font-black text-2xl flex items-center justify-center mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-8">
+            <div className="bg-white rounded-2xl md:rounded-3xl border border-slate-200 p-4 md:p-8 shadow-xs hover:shadow-md transition">
+              <div className="hidden md:flex w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 font-black text-2xl items-center justify-center mb-6">
                 🏦
               </div>
-              <h3 className="text-lg font-black text-slate-900 mb-2">Bank Repossessions</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <h3 className="text-sm md:text-lg font-black text-slate-900 md:mb-2">Bank Repossessions</h3>
+              <p className="hidden md:block text-xs text-slate-600 leading-relaxed">
                 Direct access to bank-owned and repossessed vehicles listed at competitive, realistic market prices.
               </p>
             </div>
 
-            <div className="bg-white rounded-3xl border border-slate-200 p-8 shadow-xs hover:shadow-md transition">
-              <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 font-black text-2xl flex items-center justify-center mb-6">
+            <div className="bg-white rounded-2xl md:rounded-3xl border border-slate-200 p-4 md:p-8 shadow-xs hover:shadow-md transition">
+              <div className="hidden md:flex w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 font-black text-2xl items-center justify-center mb-6">
                 🔑
               </div>
-              <h3 className="text-lg font-black text-slate-900 mb-2">Direct Owner Listings</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <h3 className="text-sm md:text-lg font-black text-slate-900 md:mb-2">Direct Owner Listings</h3>
+              <p className="hidden md:block text-xs text-slate-600 leading-relaxed">
                 Connect directly with vehicle owners for honest descriptions, genuine service histories, and negotiable terms.
               </p>
             </div>
 
-            <div className="bg-white rounded-3xl border border-slate-200 p-8 shadow-xs hover:shadow-md transition">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 font-black text-2xl flex items-center justify-center mb-6">
+            <div className="bg-white rounded-2xl md:rounded-3xl border border-slate-200 p-4 md:p-8 shadow-xs hover:shadow-md transition">
+              <div className="hidden md:flex w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 font-black text-2xl items-center justify-center mb-6">
                 ✓
               </div>
-              <h3 className="text-lg font-black text-slate-900 mb-2">Verified Status</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <h3 className="text-sm md:text-lg font-black text-slate-900 md:mb-2">Verified Status</h3>
+              <p className="hidden md:block text-xs text-slate-600 leading-relaxed">
                 Every vehicle listed publicly undergoes verification of basic details, ownership status, and physical location.
               </p>
             </div>
@@ -317,7 +316,7 @@ export default async function HomePage() {
       {/* Featured Brands */}
       {brandsList.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex flex-col items-start gap-3 mb-6 sm:flex-row sm:items-end sm:justify-between sm:mb-8">
             <div>
               <span className="text-xs font-bold text-red-600 uppercase tracking-widest block">
                 Top Makes
@@ -326,17 +325,18 @@ export default async function HomePage() {
                 Browse By Brand
               </h2>
             </div>
-            <Link href="/brands" className="text-xs font-bold text-red-600 hover:underline">
-              View All Brands →
+            <Link href="/brands" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-red-100 bg-red-50 px-4 text-sm font-bold text-red-700 transition hover:bg-red-100 sm:min-h-0 sm:rounded-none sm:border-0 sm:bg-transparent sm:px-0 sm:text-xs sm:hover:bg-transparent sm:hover:underline">
+              <span>View All Brands</span><span aria-hidden="true">→</span>
             </Link>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
-            {brandsList.map((brand) => (
+          <div className="overflow-hidden">
+            <div className="flex w-max gap-3 animate-brand-marquee md:gap-4">
+              {(brandsList.length > 0 ? [...brandsList, ...brandsList] : []).map((brand, index) => (
               <Link
-                key={brand.id}
+                key={`${brand.id}-${index}`}
                 href={`/brands/${brand.slug}`}
-                className="bg-white rounded-2xl border border-slate-200 p-5 text-center hover:border-red-600 hover:shadow-lg transition-all group flex flex-col items-center justify-center gap-2"
+                className="flex w-36 shrink-0 flex-col items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white p-4 text-center transition-all hover:border-red-600 hover:shadow-lg group md:w-40 md:p-5"
               >
                 {brand.logoUrl ? (
                   // eslint-disable-next-line @next/next/no-img-element
@@ -357,14 +357,15 @@ export default async function HomePage() {
                   {brand.count} {brand.count === 1 ? 'car' : 'cars'}
                 </span>
               </Link>
-            ))}
+              ))}
+            </div>
           </div>
         </section>
       )}
 
       {/* Sell Your Car CTA Banner */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-slate-900 rounded-3xl p-8 sm:p-12 text-white flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xl relative overflow-hidden">
+        <div className="bg-slate-900 rounded-3xl p-6 sm:p-12 text-white flex flex-col md:flex-row items-center justify-between gap-6 sm:gap-8 shadow-2xl relative overflow-hidden">
           <div className="space-y-3 max-w-xl text-center md:text-left z-10">
             <span className="px-3 py-1 rounded-full bg-red-600 text-white text-xs font-extrabold uppercase tracking-wider inline-block">
               Listing Options
@@ -377,12 +378,12 @@ export default async function HomePage() {
             </p>
           </div>
 
-          <div className="z-10 shrink-0">
+          <div className="z-10 w-full shrink-0 md:w-auto">
             <Link
               href="/sell"
-              className="px-8 py-4 rounded-2xl bg-white hover:bg-slate-100 text-slate-900 font-black text-sm shadow-lg transition-all hover:scale-105 inline-block"
+              className="flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl bg-white px-5 py-4 text-sm font-black text-slate-900 shadow-lg transition-all hover:bg-slate-100 md:inline-flex md:w-auto md:px-8 md:hover:scale-105"
             >
-              List Your Car For Sale →
+              <span>List Your Car For Sale</span><span aria-hidden="true">→</span>
             </Link>
           </div>
         </div>

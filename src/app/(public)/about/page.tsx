@@ -12,9 +12,6 @@ export default function AboutPage() {
       
       {/* Header */}
       <div className="max-w-3xl space-y-4">
-        <span className="px-3.5 py-1.5 rounded-full bg-red-50 text-red-600 border border-red-200 text-xs font-black uppercase tracking-wider inline-block">
-          About KE Motors
-        </span>
         <h1 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight leading-tight">
           Transparency & Quality in <span className="text-red-600">Vehicle Buying</span>
         </h1>

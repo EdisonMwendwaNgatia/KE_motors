@@ -13,7 +13,7 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-const DEFAULT_HOTLINE = '+254700000000';
+const DEFAULT_HOTLINE = '0795492656';
 
 async function getVehicleBySlugOrId(supabase: any, slug: string) {
   const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);

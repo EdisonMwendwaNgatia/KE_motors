@@ -4,9 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { getFavorites, FAVORITES_EVENT } from '@/lib/favorites';
-import { formatWhatsAppUrl } from '@/lib/formatters';
-
-const DEFAULT_PHONE = '+254700000000'; // Default KE Motors hotline / WhatsApp
+import { DEFAULT_PHONE_NUMBER, WHATSAPP_GROUP_URL } from '@/lib/formatters';
 
 export function PublicHeader() {
   const pathname = usePathname();
@@ -44,7 +42,7 @@ export function PublicHeader() {
     { href: '/contact', label: 'Contact' },
   ];
 
-  const whatsAppUrl = formatWhatsAppUrl(DEFAULT_PHONE, undefined);
+  const whatsAppUrl = WHATSAPP_GROUP_URL;
 
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs transition-all">

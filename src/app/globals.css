@@ -16,6 +16,49 @@ html {
   scroll-behavior: smooth;
 }
 
+@keyframes brand-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.animate-brand-marquee {
+  animation: brand-marquee 28s linear infinite;
+}
+
+@media (min-width: 768px) {
+  .animate-brand-marquee {
+    animation-duration: 36s;
+  }
+}
+
+@keyframes whatsapp-bubble-intro {
+  0%, 8% { opacity: 0; transform: translateX(0.5rem) scale(0.85); }
+  15%, 75% { opacity: 1; transform: translateX(0) scale(1); }
+  100% { opacity: 0; transform: translateX(0.5rem) scale(0.85); }
+}
+
+.whatsapp-message-bubble {
+  animation: whatsapp-bubble-intro 5s ease-in-out forwards;
+}
+
+.group:hover .whatsapp-message-bubble,
+.group:focus-visible .whatsapp-message-bubble {
+  animation: none;
+  opacity: 1;
+  transform: translateX(0) scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-brand-marquee {
+    animation-play-state: paused;
+  }
+
+  .whatsapp-message-bubble {
+    animation: none;
+    opacity: 1;
+  }
+}
+
 body {
   background-color: var(--background);
   color: var(--foreground);

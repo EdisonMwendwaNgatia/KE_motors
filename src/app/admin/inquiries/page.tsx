@@ -128,7 +128,6 @@ export default function InquiriesPage() {
         <TableSkeleton rows={5} />
       ) : inquiries.length === 0 ? (
         <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-12 text-center space-y-2 shadow-xl">
-          <span className="text-4xl">💬</span>
           <h3 className="text-lg font-bold text-white">No customer inquiries found</h3>
           <p className="text-xs text-zinc-400">
             Inquiries submitted by buyers will appear here automatically.
@@ -169,14 +168,14 @@ export default function InquiriesPage() {
                           href={`tel:${inq.phone}`}
                           className="font-mono text-zinc-300 hover:text-white hover:underline block"
                         >
-                          📞 {inq.phone}
+                          {inq.phone}
                         </a>
                         {inq.email && (
                           <a
                             href={`mailto:${inq.email}`}
                             className="text-zinc-500 hover:text-zinc-300 hover:underline block text-[11px]"
                           >
-                            ✉️ {inq.email}
+                            {inq.email}
                           </a>
                         )}
                       </td>
@@ -186,9 +185,9 @@ export default function InquiriesPage() {
                         {inq.vehicle ? (
                           <Link
                             href={`/admin/vehicles/${inq.vehicle_id}`}
-                            className="font-bold text-red-400 hover:text-red-300 hover:underline"
+                            className="font-bold text-zinc-300 hover:text-white hover:underline"
                           >
-                            🚗 {vehicleTitle}
+                            {vehicleTitle}
                           </Link>
                         ) : (
                           <span className="text-zinc-500 italic">General Inquiry</span>
@@ -241,9 +240,9 @@ export default function InquiriesPage() {
                           href={whatsAppUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-900/60 hover:bg-emerald-800 border border-emerald-700/50 text-emerald-200 font-bold text-xs transition"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-950 hover:bg-emerald-900 border border-emerald-800/50 text-emerald-300 font-bold text-xs transition"
                         >
-                          <span>💬 WhatsApp</span>
+                          <span>WhatsApp</span>
                         </a>
                       </td>
                     </tr>

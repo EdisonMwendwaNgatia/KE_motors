@@ -1,27 +1,25 @@
 import React from 'react';
 import { InquiryForm } from '@/components/public/InquiryForm';
-import { formatWhatsAppUrl } from '@/lib/formatters';
+import { DEFAULT_PHONE_NUMBER, WHATSAPP_GROUP_URL } from '@/lib/formatters';
 
 export const metadata = {
   title: 'Contact Us | KE Motors Vehicle Marketplace',
   description: 'Get in touch with KE Motors via phone, WhatsApp, email, or visit us along Kiambu Road, Nairobi.',
 };
 
-const PHONE_NUMBER = '+254700000000';
+const PHONE_NUMBER = DEFAULT_PHONE_NUMBER;
+const WHATSAPP_URL = WHATSAPP_GROUP_URL;
 const EMAIL_ADDRESS = 'info@kemotors.co.ke';
 const LOCATION = 'Kiambu Road / Nairobi, Kenya';
 
 export default function ContactPage() {
-  const whatsAppUrl = formatWhatsAppUrl(PHONE_NUMBER, undefined);
+  const whatsAppUrl = WHATSAPP_URL;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
       
       {/* Header */}
       <div className="max-w-3xl space-y-3">
-        <span className="px-3.5 py-1.5 rounded-full bg-red-50 text-red-600 border border-red-200 text-xs font-black uppercase tracking-wider inline-block">
-          Contact Us
-        </span>
         <h1 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight">
           Get In Touch With <span className="text-red-600">KE Motors</span>
         </h1>

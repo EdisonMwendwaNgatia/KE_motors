@@ -12,9 +12,6 @@ export default function SellPage() {
       
       {/* Page Header */}
       <div className="max-w-3xl space-y-4 text-center sm:text-left">
-        <span className="px-3.5 py-1.5 rounded-full bg-red-50 text-red-600 border border-red-200 text-xs font-black uppercase tracking-wider inline-block">
-          Seller Services
-        </span>
         <h1 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight leading-tight">
           List Your Vehicle With <span className="text-red-600">KE Motors</span>
         </h1>

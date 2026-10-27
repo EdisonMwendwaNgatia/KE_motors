@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 /* ─────────────────────────────────────────────────────────────────────────────
    Car detail loading screen:
@@ -14,14 +14,20 @@ export default function LoadingCarDetail() {
   const [gear, setGear] = useState('D1');
 
   useEffect(() => {
-    let animationFrameId: number;
-    let pulseInterval: NodeJS.Timeout;
+    let animationFrameId: number | undefined;
+    let pulseInterval: ReturnType<typeof setInterval> | undefined;
+
     const startTime = performance.now();
-    const duration = 5500; // 5.5s smooth acceleration
+    const duration = 5500; // 5.5 seconds
 
     const animate = (now: number) => {
       const elapsed = now - startTime;
-      const progress = Math.min(elapsed / duration, 1);
+
+      // Always keep progress between 0 and 1
+      const progress = Math.min(
+        Math.max(elapsed / duration, 0),
+        1
+      );
 
       let currentSpeed = 0;
       let currentRpm = 800;
@@ -31,6 +37,7 @@ export default function LoadingCarDetail() {
         // D1: 0 -> 32 km/h
         const p = progress / 0.30;
         const ease = Math.pow(p, 1.2);
+
         currentSpeed = ease * 32;
         currentRpm = 800 + ease * 2000;
         currentGear = 'D1';
@@ -38,32 +45,52 @@ export default function LoadingCarDetail() {
         // D2: 32 -> 65 km/h
         const p = (progress - 0.30) / 0.35;
         const ease = Math.pow(p, 1.1);
+
         currentSpeed = 32 + ease * 33;
         currentRpm = 1600 + ease * 1400;
         currentGear = 'D2';
       } else {
-        // D3: 65 -> 85 km/h (Cruise)
+        // D3: 65 -> 85 km/h
         const p = (progress - 0.65) / 0.35;
         const ease = 1 - Math.pow(1 - p, 2);
+
         currentSpeed = 65 + ease * 20;
         currentRpm = 1800 + ease * 350;
         currentGear = 'D3';
       }
 
-      setSpeed(Math.round(currentSpeed));
-      setRpm(Math.round(currentRpm));
-      setGear(currentGear);
+      // Prevent invalid values from ever entering React state
+      if (
+        Number.isFinite(currentSpeed) &&
+        Number.isFinite(currentRpm)
+      ) {
+        setSpeed(Math.round(currentSpeed));
+        setRpm(Math.round(currentRpm));
+        setGear(currentGear);
+      }
 
       if (progress < 1) {
         animationFrameId = requestAnimationFrame(animate);
       } else {
+        // Small cruising jitter after acceleration completes
         let t = 0;
+
         pulseInterval = setInterval(() => {
           t += 0.08;
+
           const speedJitter = Math.sin(t * 2) * 0.8;
           const rpmJitter = Math.sin(t * 2.5) * 25;
-          setSpeed(Math.round(85 + speedJitter));
-          setRpm(Math.round(2150 + rpmJitter));
+
+          const cruisingSpeed = 85 + speedJitter;
+          const cruisingRpm = 2150 + rpmJitter;
+
+          if (
+            Number.isFinite(cruisingSpeed) &&
+            Number.isFinite(cruisingRpm)
+          ) {
+            setSpeed(Math.round(cruisingSpeed));
+            setRpm(Math.round(cruisingRpm));
+          }
         }, 60);
       }
     };
@@ -71,40 +98,75 @@ export default function LoadingCarDetail() {
     animationFrameId = requestAnimationFrame(animate);
 
     return () => {
-      if (animationFrameId) cancelAnimationFrame(animationFrameId);
-      if (pulseInterval) clearInterval(pulseInterval);
+      if (animationFrameId !== undefined) {
+        cancelAnimationFrame(animationFrameId);
+      }
+
+      if (pulseInterval !== undefined) {
+        clearInterval(pulseInterval);
+      }
     };
   }, []);
 
-  // Gauge angles (-135deg to +135deg = 270deg arc)
+  /* ─────────────────────────────────────────────────────────────────────────
+     Gauge calculations
+  ───────────────────────────────────────────────────────────────────────── */
+
   const maxSpeed = 260;
-  const clampedSpeed = Math.min(Math.max(speed, 0), maxSpeed);
-  const speedNeedleAngle = -135 + (clampedSpeed / maxSpeed) * 270;
-
   const maxRpm = 8000;
-  const clampedRpm = Math.min(Math.max(rpm, 0), maxRpm);
-  const rpmNeedleAngle = -135 + (clampedRpm / maxRpm) * 270;
+  const radius = 88;
 
-  // Arc stroke dash (radius 88px, 270deg length = 414.69px)
-  const arcLength = 414.69;
-  const speedArcOffset = arcLength * (1 - clampedSpeed / maxSpeed);
-  const rpmArcOffset = arcLength * (1 - clampedRpm / maxRpm);
+  // 270 degree arc length
+  const arcLength = (270 / 360) * 2 * Math.PI * radius;
+
+  // Extra safety: guarantee finite numbers
+  const safeSpeed = Number.isFinite(speed) ? speed : 0;
+  const safeRpm = Number.isFinite(rpm) ? rpm : 800;
+
+  const clampedSpeed = Math.min(
+    Math.max(safeSpeed, 0),
+    maxSpeed
+  );
+
+  const clampedRpm = Math.min(
+    Math.max(safeRpm, 0),
+    maxRpm
+  );
+
+  const speedNeedleAngle =
+    -135 + (clampedSpeed / maxSpeed) * 270;
+
+  const rpmNeedleAngle =
+    -135 + (clampedRpm / maxRpm) * 270;
+
+  const speedArcOffset =
+    arcLength * (1 - clampedSpeed / maxSpeed);
+
+  const rpmArcOffset =
+    arcLength * (1 - clampedRpm / maxRpm);
 
   return (
     <>
-      {/* ── MOBILE LOADING SCREEN (< sm): Simple 3 Dots on White Background ── */}
+      {/* ───────────────────────────────────────────────────────────────────
+          MOBILE LOADING SCREEN
+      ─────────────────────────────────────────────────────────────────── */}
+
       <div className="flex sm:hidden fixed inset-0 z-[9999] bg-white flex-col items-center justify-center space-y-4">
         <div className="flex items-center space-x-2">
           <div className="w-3.5 h-3.5 bg-red-600 rounded-full animate-bounce [animation-delay:-0.3s]" />
           <div className="w-3.5 h-3.5 bg-red-600 rounded-full animate-bounce [animation-delay:-0.15s]" />
           <div className="w-3.5 h-3.5 bg-red-600 rounded-full animate-bounce" />
         </div>
+
         <span className="text-xs font-black uppercase tracking-widest text-slate-400">
           Loading...
         </span>
       </div>
 
-      {/* ── DESKTOP LOADING SCREEN (>= sm): Porsche Backdrop + BMW Gauges ── */}
+      {/* ───────────────────────────────────────────────────────────────────
+          DESKTOP LOADING SCREEN
+      ─────────────────────────────────────────────────────────────────── */}
+
       <div
         className="hidden sm:flex fixed inset-0 z-[9999] bg-[#07080e] flex-col items-center justify-center font-sans overflow-hidden"
       >
@@ -112,58 +174,122 @@ export default function LoadingCarDetail() {
           @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
 
           @keyframes porsche-bg-zoom {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+            0% {
+              transform: scale(1);
+            }
+
+            50% {
+              transform: scale(1.05);
+            }
+
+            100% {
+              transform: scale(1);
+            }
           }
 
           @keyframes speed-streak-left {
-            0% { transform: translateX(-100vw) scaleX(0.2); opacity: 0; }
-            30% { opacity: 0.9; }
-            100% { transform: translateX(100vw) scaleX(2.5); opacity: 0; }
+            0% {
+              transform: translateX(-100vw) scaleX(0.2);
+              opacity: 0;
+            }
+
+            30% {
+              opacity: 0.9;
+            }
+
+            100% {
+              transform: translateX(100vw) scaleX(2.5);
+              opacity: 0;
+            }
           }
 
           @keyframes ke-glow-pulse {
-            0%, 100% { opacity: 0.45; transform: scale(0.98); }
-            50%       { opacity: 0.8; transform: scale(1.04); }
+            0%,
+            100% {
+              opacity: 0.45;
+              transform: scale(0.98);
+            }
+
+            50% {
+              opacity: 0.8;
+              transform: scale(1.04);
+            }
           }
 
           @keyframes ke-needle-glow {
-            0%, 100% { filter: drop-shadow(0 0 5px rgba(230,0,0,0.85)); }
-            50%       { filter: drop-shadow(0 0 14px rgba(255,40,40,1)) drop-shadow(0 0 5px #fff); }
+            0%,
+            100% {
+              filter:
+                drop-shadow(0 0 5px rgba(230, 0, 0, 0.85));
+            }
+
+            50% {
+              filter:
+                drop-shadow(0 0 14px rgba(255, 40, 40, 1))
+                drop-shadow(0 0 5px #fff);
+            }
           }
 
           @keyframes ke-gear-pulse {
-            0% { transform: scale(0.92); opacity: 0.8; }
-            50% { transform: scale(1.08); opacity: 1; }
-            100% { transform: scale(1); opacity: 1; }
+            0% {
+              transform: scale(0.92);
+              opacity: 0.8;
+            }
+
+            50% {
+              transform: scale(1.08);
+              opacity: 1;
+            }
+
+            100% {
+              transform: scale(1);
+              opacity: 1;
+            }
           }
 
           @keyframes ke-shimmer {
-            0%   { background-position: -500px 0; }
-            100% { background-position:  500px 0; }
+            0% {
+              background-position: -500px 0;
+            }
+
+            100% {
+              background-position: 500px 0;
+            }
           }
 
           @keyframes ke-fade-up {
-            from { opacity: 0; transform: translateY(16px); }
-            to   { opacity: 1; transform: translateY(0); }
+            from {
+              opacity: 0;
+              transform: translateY(16px);
+            }
+
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
           }
 
           .ke-porsche-bg {
-            animation: porsche-bg-zoom 20s ease-in-out infinite alternate;
+            animation:
+              porsche-bg-zoom 20s ease-in-out infinite alternate;
           }
 
           .ke-needle-el {
-            transition: transform 0.12s cubic-bezier(0.25, 1, 0.5, 1);
-            animation: ke-needle-glow 1.2s ease-in-out infinite;
+            transition:
+              transform 0.12s cubic-bezier(0.25, 1, 0.5, 1);
+
+            animation:
+              ke-needle-glow 1.2s ease-in-out infinite;
           }
 
           .ke-ambient-bg {
-            animation: ke-glow-pulse 3.5s ease-in-out infinite;
+            animation:
+              ke-glow-pulse 3.5s ease-in-out infinite;
           }
 
           .ke-gear-badge {
-            animation: ke-gear-pulse 0.4s ease-out;
+            animation:
+              ke-gear-pulse 0.4s ease-out;
           }
 
           .speed-light {
@@ -174,7 +300,10 @@ export default function LoadingCarDetail() {
           }
         `}</style>
 
-        {/* 1. Porsche Background Image */}
+        {/* ───────────────────────────────────────────────────────────────
+            1. Porsche Background
+        ─────────────────────────────────────────────────────────────── */}
+
         <div
           className="ke-porsche-bg"
           style={{
@@ -184,11 +313,13 @@ export default function LoadingCarDetail() {
               'url("https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1600&q=80")',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            filter: 'brightness(0.4) contrast(1.15) saturate(1.1)',
+            filter:
+              'brightness(0.4) contrast(1.15) saturate(1.1)',
           }}
         />
 
         {/* Dark overlay */}
+
         <div
           style={{
             position: 'absolute',
@@ -199,15 +330,61 @@ export default function LoadingCarDetail() {
           }}
         />
 
-        {/* 2. Speed Light Streaks Layer */}
-        <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
+        {/* ───────────────────────────────────────────────────────────────
+            2. Speed Light Streaks
+        ─────────────────────────────────────────────────────────────── */}
+
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            overflow: 'hidden',
+            pointerEvents: 'none',
+          }}
+        >
           {[
-            { top: '18%', color: '#ff2a4b', width: '320px', speed: '2.4s', delay: '0s' },
-            { top: '28%', color: '#00d2ff', width: '450px', speed: '1.8s', delay: '0.6s' },
-            { top: '42%', color: '#ffaa00', width: '280px', speed: '2.8s', delay: '1.2s' },
-            { top: '56%', color: '#ffffff', width: '500px', speed: '2.1s', delay: '0.3s' },
-            { top: '68%', color: '#ff2a4b', width: '380px', speed: '1.9s', delay: '0.9s' },
-            { top: '80%', color: '#00d2ff', width: '420px', speed: '2.6s', delay: '1.5s' },
+            {
+              top: '18%',
+              color: '#ff2a4b',
+              width: '320px',
+              speed: '2.4s',
+              delay: '0s',
+            },
+            {
+              top: '28%',
+              color: '#00d2ff',
+              width: '450px',
+              speed: '1.8s',
+              delay: '0.6s',
+            },
+            {
+              top: '42%',
+              color: '#ffaa00',
+              width: '280px',
+              speed: '2.8s',
+              delay: '1.2s',
+            },
+            {
+              top: '56%',
+              color: '#ffffff',
+              width: '500px',
+              speed: '2.1s',
+              delay: '0.3s',
+            },
+            {
+              top: '68%',
+              color: '#ff2a4b',
+              width: '380px',
+              speed: '1.9s',
+              delay: '0.9s',
+            },
+            {
+              top: '80%',
+              color: '#00d2ff',
+              width: '420px',
+              speed: '2.6s',
+              delay: '1.5s',
+            },
           ].map((trail, i) => (
             <div
               key={i}
@@ -215,15 +392,33 @@ export default function LoadingCarDetail() {
               style={{
                 top: trail.top,
                 width: trail.width,
-                background: `linear-gradient(90deg, transparent 0%, ${trail.color} 50%, #ffffff 90%, transparent 100%)`,
-                boxShadow: `0 0 14px ${trail.color}, 0 0 4px #ffffff`,
-                animation: `speed-streak-left ${trail.speed} linear ${trail.delay} infinite`,
+                background: `linear-gradient(
+                  90deg,
+                  transparent 0%,
+                  ${trail.color} 50%,
+                  #ffffff 90%,
+                  transparent 100%
+                )`,
+                boxShadow: `
+                  0 0 14px ${trail.color},
+                  0 0 4px #ffffff
+                `,
+                animation: `
+                  speed-streak-left
+                  ${trail.speed}
+                  linear
+                  ${trail.delay}
+                  infinite
+                `,
               }}
             />
           ))}
         </div>
 
-        {/* 3. Soft Ambient Glow */}
+        {/* ───────────────────────────────────────────────────────────────
+            3. Ambient Glow
+        ─────────────────────────────────────────────────────────────── */}
+
         <div
           className="ke-ambient-bg"
           style={{
@@ -237,22 +432,57 @@ export default function LoadingCarDetail() {
           }}
         />
 
-        {/* 4. Header Badge */}
+        {/* ───────────────────────────────────────────────────────────────
+            4. Header Badge
+        ─────────────────────────────────────────────────────────────── */}
+
         <div
           style={{
             marginBottom: 20,
-            animation: 'ke-fade-up 0.5s ease forwards',
+            animation:
+              'ke-fade-up 0.5s ease forwards',
             display: 'flex',
             alignItems: 'center',
             gap: 10,
             zIndex: 10,
           }}
         >
-          <div style={{ display: 'flex', gap: 2.5, height: 14, alignItems: 'center' }}>
-            <div style={{ width: 4, height: 14, borderRadius: 1, background: '#0066B1' }} />
-            <div style={{ width: 4, height: 14, borderRadius: 1, background: '#001E50' }} />
-            <div style={{ width: 4, height: 14, borderRadius: 1, background: '#E40521' }} />
+          <div
+            style={{
+              display: 'flex',
+              gap: 2.5,
+              height: 14,
+              alignItems: 'center',
+            }}
+          >
+            <div
+              style={{
+                width: 4,
+                height: 14,
+                borderRadius: 1,
+                background: '#0066B1',
+              }}
+            />
+
+            <div
+              style={{
+                width: 4,
+                height: 14,
+                borderRadius: 1,
+                background: '#001E50',
+              }}
+            />
+
+            <div
+              style={{
+                width: 4,
+                height: 14,
+                borderRadius: 1,
+                background: '#E40521',
+              }}
+            />
           </div>
+
           <span
             style={{
               fontSize: 11,
@@ -260,14 +490,26 @@ export default function LoadingCarDetail() {
               letterSpacing: '0.3em',
               textTransform: 'uppercase',
               color: '#ffffff',
-              textShadow: '0 2px 8px rgba(0,0,0,0.8)',
+              textShadow:
+                '0 2px 8px rgba(0,0,0,0.8)',
             }}
           >
-            KE MOTORS <span style={{ color: '#ff3344', fontWeight: 900 }}>DIGITAL CLUSTER</span>
+            KE MOTORS{' '}
+            <span
+              style={{
+                color: '#ff3344',
+                fontWeight: 900,
+              }}
+            >
+              DIGITAL CLUSTER
+            </span>
           </span>
         </div>
 
-        {/* Dual Gauges Container */}
+        {/* ───────────────────────────────────────────────────────────────
+            DUAL GAUGES CONTAINER
+        ─────────────────────────────────────────────────────────────── */}
+
         <div
           style={{
             display: 'flex',
@@ -275,52 +517,168 @@ export default function LoadingCarDetail() {
             justifyContent: 'center',
             gap: 20,
             flexWrap: 'wrap',
-            animation: 'ke-fade-up 0.6s ease forwards',
+            animation:
+              'ke-fade-up 0.6s ease forwards',
             zIndex: 10,
           }}
         >
-          <svg width="0" height="0" style={{ position: 'absolute' }}>
+          {/* ─────────────────────────────────────────────────────────────
+              SVG DEFINITIONS
+          ───────────────────────────────────────────────────────────── */}
+
+          <svg
+            width="0"
+            height="0"
+            style={{
+              position: 'absolute',
+            }}
+          >
             <defs>
-              <radialGradient id="bmw-bezel-g" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stopColor="#2c2d3a" />
-                <stop offset="85%" stopColor="#151620" />
-                <stop offset="100%" stopColor="#090a10" />
+              <radialGradient
+                id="bmw-bezel-g"
+                cx="50%"
+                cy="50%"
+                r="50%"
+              >
+                <stop
+                  offset="0%"
+                  stopColor="#2c2d3a"
+                />
+                <stop
+                  offset="85%"
+                  stopColor="#151620"
+                />
+                <stop
+                  offset="100%"
+                  stopColor="#090a10"
+                />
               </radialGradient>
-              <radialGradient id="bmw-face-g" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stopColor="#1c1e2d" />
-                <stop offset="70%" stopColor="#0f101b" />
-                <stop offset="100%" stopColor="#080811" />
+
+              <radialGradient
+                id="bmw-face-g"
+                cx="50%"
+                cy="50%"
+                r="50%"
+              >
+                <stop
+                  offset="0%"
+                  stopColor="#1c1e2d"
+                />
+                <stop
+                  offset="70%"
+                  stopColor="#0f101b"
+                />
+                <stop
+                  offset="100%"
+                  stopColor="#080811"
+                />
               </radialGradient>
-              <linearGradient id="bmw-speed-arc" x1="0%" y1="100%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#cc0000" />
-                <stop offset="60%" stopColor="#ff3333" />
-                <stop offset="85%" stopColor="#ffaa00" />
-                <stop offset="100%" stopColor="#ff5500" />
+
+              <linearGradient
+                id="bmw-speed-arc"
+                x1="0%"
+                y1="100%"
+                x2="100%"
+                y2="0%"
+              >
+                <stop
+                  offset="0%"
+                  stopColor="#cc0000"
+                />
+                <stop
+                  offset="60%"
+                  stopColor="#ff3333"
+                />
+                <stop
+                  offset="85%"
+                  stopColor="#ffaa00"
+                />
+                <stop
+                  offset="100%"
+                  stopColor="#ff5500"
+                />
               </linearGradient>
-              <linearGradient id="bmw-rpm-arc" x1="0%" y1="100%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#0066b1" />
-                <stop offset="60%" stopColor="#00a2ff" />
-                <stop offset="82%" stopColor="#ffaa00" />
-                <stop offset="100%" stopColor="#ff1e43" />
+
+              <linearGradient
+                id="bmw-rpm-arc"
+                x1="0%"
+                y1="100%"
+                x2="100%"
+                y2="0%"
+              >
+                <stop
+                  offset="0%"
+                  stopColor="#0066b1"
+                />
+                <stop
+                  offset="60%"
+                  stopColor="#00a2ff"
+                />
+                <stop
+                  offset="82%"
+                  stopColor="#ffaa00"
+                />
+                <stop
+                  offset="100%"
+                  stopColor="#ff1e43"
+                />
               </linearGradient>
-              <linearGradient id="bmw-needle-g" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#ffffff" />
-                <stop offset="25%" stopColor="#ff2222" />
-                <stop offset="100%" stopColor="#880000" />
+
+              <linearGradient
+                id="bmw-needle-g"
+                x1="0%"
+                y1="0%"
+                x2="0%"
+                y2="100%"
+              >
+                <stop
+                  offset="0%"
+                  stopColor="#ffffff"
+                />
+                <stop
+                  offset="25%"
+                  stopColor="#ff2222"
+                />
+                <stop
+                  offset="100%"
+                  stopColor="#880000"
+                />
               </linearGradient>
-              <radialGradient id="bmw-glass-g" cx="38%" cy="26%" r="58%">
-                <stop offset="0%" stopColor="rgba(255, 255, 255, 0.15)" />
-                <stop offset="100%" stopColor="rgba(255, 255, 255, 0)" />
+
+              <radialGradient
+                id="bmw-glass-g"
+                cx="38%"
+                cy="26%"
+                r="58%"
+              >
+                <stop
+                  offset="0%"
+                  stopColor="rgba(255,255,255,0.15)"
+                />
+                <stop
+                  offset="100%"
+                  stopColor="rgba(255,255,255,0)"
+                />
               </radialGradient>
+
               <filter id="glow-strong-g">
-                <feGaussianBlur stdDeviation="3" result="coloredBlur" />
+                <feGaussianBlur
+                  stdDeviation="3"
+                  result="coloredBlur"
+                />
+
                 <feMerge>
                   <feMergeNode in="coloredBlur" />
                   <feMergeNode in="SourceGraphic" />
                 </feMerge>
               </filter>
+
               <filter id="glow-soft-g">
-                <feGaussianBlur stdDeviation="1.5" result="coloredBlur" />
+                <feGaussianBlur
+                  stdDeviation="1.5"
+                  result="coloredBlur"
+                />
+
                 <feMerge>
                   <feMergeNode in="coloredBlur" />
                   <feMergeNode in="SourceGraphic" />
@@ -329,22 +687,67 @@ export default function LoadingCarDetail() {
             </defs>
           </svg>
 
-          {/* Speedometer (Left) */}
+          {/* ─────────────────────────────────────────────────────────────
+              SPEEDOMETER
+          ───────────────────────────────────────────────────────────── */}
+
           <div
             style={{
               position: 'relative',
               width: 240,
               height: 240,
-              filter: 'drop-shadow(0 20px 50px rgba(0,0,0,0.6))',
+              filter:
+                'drop-shadow(0 20px 50px rgba(0,0,0,0.6))',
             }}
           >
-            <svg viewBox="0 0 200 200" width="240" height="240">
-              <circle cx="100" cy="100" r="98" fill="url(#bmw-bezel-g)" />
-              <circle cx="100" cy="100" r="98" fill="none" stroke="#36374a" strokeWidth="1.5" />
-              <circle cx="100" cy="100" r="92" fill="none" stroke="#1f202e" strokeWidth="1" />
-              <circle cx="100" cy="100" r="88" fill="url(#bmw-face-g)" />
+            <svg
+              viewBox="0 0 200 200"
+              width="240"
+              height="240"
+            >
+              <circle
+                cx="100"
+                cy="100"
+                r="98"
+                fill="url(#bmw-bezel-g)"
+              />
 
-              <path d="M22 158 A88 88 0 1 1 178 158" fill="none" stroke="#151626" strokeWidth="8" strokeLinecap="round" />
+              <circle
+                cx="100"
+                cy="100"
+                r="98"
+                fill="none"
+                stroke="#36374a"
+                strokeWidth="1.5"
+              />
+
+              <circle
+                cx="100"
+                cy="100"
+                r="92"
+                fill="none"
+                stroke="#1f202e"
+                strokeWidth="1"
+              />
+
+              <circle
+                cx="100"
+                cy="100"
+                r="88"
+                fill="url(#bmw-face-g)"
+              />
+
+              {/* Base arc */}
+
+              <path
+                d="M22 158 A88 88 0 1 1 178 158"
+                fill="none"
+                stroke="#151626"
+                strokeWidth="8"
+                strokeLinecap="round"
+              />
+
+              {/* Active speed arc */}
 
               <path
                 d="M22 158 A88 88 0 1 1 178 158"
@@ -352,70 +755,159 @@ export default function LoadingCarDetail() {
                 stroke="url(#bmw-speed-arc)"
                 strokeWidth="8"
                 strokeLinecap="round"
-                strokeDasharray={arcLength}
-                strokeDashoffset={speedArcOffset}
+                strokeDasharray={String(arcLength)}
+                strokeDashoffset={String(speedArcOffset)}
                 filter="url(#glow-soft-g)"
-                style={{ transition: 'stroke-dashoffset 0.1s linear' }}
+                style={{
+                  transition:
+                    'stroke-dashoffset 0.1s linear',
+                }}
               />
 
-              {[0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260].map((val) => {
-                const angle = -135 + (val / 260) * 270;
-                const rad = (angle * Math.PI) / 180;
-                const isRed = val >= 220;
-                return (
-                  <line
-                    key={val}
-                    x1={100 + 82 * Math.cos(rad)}
-                    y1={100 + 82 * Math.sin(rad)}
-                    x2={100 + 69 * Math.cos(rad)}
-                    y2={100 + 69 * Math.sin(rad)}
-                    stroke={isRed ? '#ff2a4b' : '#d0d4e4'}
-                    strokeWidth={isRed ? 2.5 : 2}
-                    strokeLinecap="round"
-                    opacity={isRed ? 1 : 0.85}
-                  />
-                );
-              })}
+              {/* Major speed ticks */}
 
-              {Array.from({ length: 53 }).map((_, i) => {
-                if (i % 4 === 0) return null;
-                const angle = -135 + (i / 52) * 270;
-                const rad = (angle * Math.PI) / 180;
-                return (
-                  <line
-                    key={i}
-                    x1={100 + 82 * Math.cos(rad)}
-                    y1={100 + 82 * Math.sin(rad)}
-                    x2={100 + 76 * Math.cos(rad)}
-                    y2={100 + 76 * Math.sin(rad)}
-                    stroke="#2d3045"
-                    strokeWidth="1"
-                    strokeLinecap="round"
-                  />
-                );
-              })}
+              {[0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260].map(
+                (val) => {
+                  const angle =
+                    -135 +
+                    (val / 260) * 270;
 
-              {[0, 40, 80, 120, 160, 200, 240].map((val) => {
-                const angle = -135 + (val / 260) * 270;
-                const rad = (angle * Math.PI) / 180;
-                const isRed = val >= 220;
-                return (
-                  <text
-                    key={val}
-                    x={100 + 57 * Math.cos(rad)}
-                    y={100 + 57 * Math.sin(rad) + 3.5}
-                    textAnchor="middle"
-                    fontSize="7.5"
-                    fontWeight="700"
-                    fill={isRed ? '#ff3a55' : '#6b7280'}
-                    fontFamily="'Inter', sans-serif"
-                  >
-                    {val}
-                  </text>
-                );
-              })}
+                  const rad =
+                    (angle * Math.PI) / 180;
 
-              <circle cx="100" cy="100" r="46" fill="none" stroke="#1d2033" strokeWidth="1" />
+                  const isRed = val >= 220;
+
+                  return (
+                    <line
+                      key={val}
+                      x1={
+                        100 +
+                        82 * Math.cos(rad)
+                      }
+                      y1={
+                        100 +
+                        82 * Math.sin(rad)
+                      }
+                      x2={
+                        100 +
+                        69 * Math.cos(rad)
+                      }
+                      y2={
+                        100 +
+                        69 * Math.sin(rad)
+                      }
+                      stroke={
+                        isRed
+                          ? '#ff2a4b'
+                          : '#d0d4e4'
+                      }
+                      strokeWidth={
+                        isRed ? 2.5 : 2
+                      }
+                      strokeLinecap="round"
+                      opacity={
+                        isRed ? 1 : 0.85
+                      }
+                    />
+                  );
+                }
+              )}
+
+              {/* Minor speed ticks */}
+
+              {Array.from({ length: 53 }).map(
+                (_, i) => {
+                  if (i % 4 === 0) {
+                    return null;
+                  }
+
+                  const angle =
+                    -135 +
+                    (i / 52) * 270;
+
+                  const rad =
+                    (angle * Math.PI) / 180;
+
+                  return (
+                    <line
+                      key={i}
+                      x1={
+                        100 +
+                        82 * Math.cos(rad)
+                      }
+                      y1={
+                        100 +
+                        82 * Math.sin(rad)
+                      }
+                      x2={
+                        100 +
+                        76 * Math.cos(rad)
+                      }
+                      y2={
+                        100 +
+                        76 * Math.sin(rad)
+                      }
+                      stroke="#2d3045"
+                      strokeWidth="1"
+                      strokeLinecap="round"
+                    />
+                  );
+                }
+              )}
+
+              {/* Speed numbers */}
+
+              {[0, 40, 80, 120, 160, 200, 240].map(
+                (val) => {
+                  const angle =
+                    -135 +
+                    (val / 260) * 270;
+
+                  const rad =
+                    (angle * Math.PI) / 180;
+
+                  const isRed = val >= 220;
+
+                  return (
+                    <text
+                      key={val}
+                      x={
+                        100 +
+                        57 * Math.cos(rad)
+                      }
+                      y={
+                        100 +
+                        57 * Math.sin(rad) +
+                        3.5
+                      }
+                      textAnchor="middle"
+                      fontSize="7.5"
+                      fontWeight="700"
+                      fill={
+                        isRed
+                          ? '#ff3a55'
+                          : '#6b7280'
+                      }
+                      fontFamily="'Inter', sans-serif"
+                    >
+                      {val}
+                    </text>
+                  );
+                }
+              )}
+
+              {/* Inner circle */}
+
+              <circle
+                cx="100"
+                cy="100"
+                r="46"
+                fill="none"
+                stroke="#1d2033"
+                strokeWidth="1"
+              />
+
+              {/* Speed value */}
 
               <text
                 x="100"
@@ -427,7 +919,7 @@ export default function LoadingCarDetail() {
                 fontFamily="'Inter', sans-serif"
                 filter="url(#glow-soft-g)"
               >
-                {speed}
+                {clampedSpeed}
               </text>
 
               <text
@@ -456,25 +948,73 @@ export default function LoadingCarDetail() {
                 SPEED
               </text>
 
+              {/* Speed needle */}
+
               <g
                 className="ke-needle-el"
                 style={{
                   transform: `rotate(${speedNeedleAngle}deg)`,
-                  transformOrigin: '100px 116px',
+                  transformOrigin:
+                    '100px 116px',
                 }}
               >
-                <polygon points="98,34 102,34 101.2,116 98.8,116" fill="url(#bmw-needle-g)" filter="url(#glow-strong-g)" />
-                <circle cx="100" cy="38" r="2.2" fill="#ffffff" filter="url(#glow-strong-g)" />
+                <polygon
+                  points="98,34 102,34 101.2,116 98.8,116"
+                  fill="url(#bmw-needle-g)"
+                  filter="url(#glow-strong-g)"
+                />
+
+                <circle
+                  cx="100"
+                  cy="38"
+                  r="2.2"
+                  fill="#ffffff"
+                  filter="url(#glow-strong-g)"
+                />
               </g>
 
-              <circle cx="100" cy="116" r="11" fill="#0f101a" stroke="#222538" strokeWidth="2" />
-              <circle cx="100" cy="116" r="6" fill="#cc0000" filter="url(#glow-soft-g)" />
-              <circle cx="100" cy="116" r="2.5" fill="#ffffff" />
-              <circle cx="100" cy="100" r="88" fill="url(#bmw-glass-g)" pointerEvents="none" />
+              {/* Speed needle hub */}
+
+              <circle
+                cx="100"
+                cy="116"
+                r="11"
+                fill="#0f101a"
+                stroke="#222538"
+                strokeWidth="2"
+              />
+
+              <circle
+                cx="100"
+                cy="116"
+                r="6"
+                fill="#cc0000"
+                filter="url(#glow-soft-g)"
+              />
+
+              <circle
+                cx="100"
+                cy="116"
+                r="2.5"
+                fill="#ffffff"
+              />
+
+              {/* Glass reflection */}
+
+              <circle
+                cx="100"
+                cy="100"
+                r="88"
+                fill="url(#bmw-glass-g)"
+                pointerEvents="none"
+              />
             </svg>
           </div>
 
-          {/* Center Gear Badge */}
+          {/* ─────────────────────────────────────────────────────────────
+              CENTER GEAR BADGE
+          ───────────────────────────────────────────────────────────── */}
+
           <div
             style={{
               display: 'flex',
@@ -483,11 +1023,14 @@ export default function LoadingCarDetail() {
               justifyContent: 'center',
               gap: 8,
               padding: '14px 18px',
-              background: 'rgba(10, 12, 22, 0.88)',
+              background:
+                'rgba(10, 12, 22, 0.88)',
               backdropFilter: 'blur(8px)',
               borderRadius: 16,
-              border: '1px solid rgba(255, 255, 255, 0.12)',
-              boxShadow: '0 12px 30px rgba(0,0,0,0.5)',
+              border:
+                '1px solid rgba(255,255,255,0.12)',
+              boxShadow:
+                '0 12px 30px rgba(0,0,0,0.5)',
               minWidth: 96,
             }}
           >
@@ -510,7 +1053,8 @@ export default function LoadingCarDetail() {
                 padding: '6px 14px',
                 borderRadius: 8,
                 background: '#0066B1',
-                boxShadow: '0 0 16px rgba(0,102,177,0.7)',
+                boxShadow:
+                  '0 0 16px rgba(0,102,177,0.7)',
                 color: '#ffffff',
                 fontSize: 15,
                 fontWeight: 900,
@@ -534,22 +1078,67 @@ export default function LoadingCarDetail() {
             </span>
           </div>
 
-          {/* Tachometer / RPM (Right) */}
+          {/* ─────────────────────────────────────────────────────────────
+              TACHOMETER / RPM
+          ───────────────────────────────────────────────────────────── */}
+
           <div
             style={{
               position: 'relative',
               width: 240,
               height: 240,
-              filter: 'drop-shadow(0 20px 50px rgba(0,0,0,0.6))',
+              filter:
+                'drop-shadow(0 20px 50px rgba(0,0,0,0.6))',
             }}
           >
-            <svg viewBox="0 0 200 200" width="240" height="240">
-              <circle cx="100" cy="100" r="98" fill="url(#bmw-bezel-g)" />
-              <circle cx="100" cy="100" r="98" fill="none" stroke="#36374a" strokeWidth="1.5" />
-              <circle cx="100" cy="100" r="92" fill="none" stroke="#1f202e" strokeWidth="1" />
-              <circle cx="100" cy="100" r="88" fill="url(#bmw-face-g)" />
+            <svg
+              viewBox="0 0 200 200"
+              width="240"
+              height="240"
+            >
+              <circle
+                cx="100"
+                cy="100"
+                r="98"
+                fill="url(#bmw-bezel-g)"
+              />
 
-              <path d="M22 158 A88 88 0 1 1 178 158" fill="none" stroke="#151626" strokeWidth="8" strokeLinecap="round" />
+              <circle
+                cx="100"
+                cy="100"
+                r="98"
+                fill="none"
+                stroke="#36374a"
+                strokeWidth="1.5"
+              />
+
+              <circle
+                cx="100"
+                cy="100"
+                r="92"
+                fill="none"
+                stroke="#1f202e"
+                strokeWidth="1"
+              />
+
+              <circle
+                cx="100"
+                cy="100"
+                r="88"
+                fill="url(#bmw-face-g)"
+              />
+
+              {/* Base arc */}
+
+              <path
+                d="M22 158 A88 88 0 1 1 178 158"
+                fill="none"
+                stroke="#151626"
+                strokeWidth="8"
+                strokeLinecap="round"
+              />
+
+              {/* Active RPM arc */}
 
               <path
                 d="M22 158 A88 88 0 1 1 178 158"
@@ -557,71 +1146,165 @@ export default function LoadingCarDetail() {
                 stroke="url(#bmw-rpm-arc)"
                 strokeWidth="8"
                 strokeLinecap="round"
-                strokeDasharray={arcLength}
-                strokeDashoffset={rpmArcOffset}
+                strokeDasharray={String(arcLength)}
+                strokeDashoffset={String(rpmArcOffset)}
                 filter="url(#glow-soft-g)"
-                style={{ transition: 'stroke-dashoffset 0.1s linear' }}
+                style={{
+                  transition:
+                    'stroke-dashoffset 0.1s linear',
+                }}
               />
 
-              {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((val) => {
-                const angle = -135 + (val / 8) * 270;
-                const rad = (angle * Math.PI) / 180;
-                const isRedline = val >= 6;
-                return (
-                  <line
-                    key={val}
-                    x1={100 + 82 * Math.cos(rad)}
-                    y1={100 + 82 * Math.sin(rad)}
-                    x2={100 + 69 * Math.cos(rad)}
-                    y2={100 + 69 * Math.sin(rad)}
-                    stroke={isRedline ? '#ff2a4b' : '#d0d4e4'}
-                    strokeWidth={isRedline ? 2.8 : 2}
-                    strokeLinecap="round"
-                    opacity={isRedline ? 1 : 0.85}
-                  />
-                );
-              })}
+              {/* Major RPM ticks */}
 
-              {Array.from({ length: 33 }).map((_, i) => {
-                if (i % 4 === 0) return null;
-                const angle = -135 + (i / 32) * 270;
-                const rad = (angle * Math.PI) / 180;
-                const isRed = i >= 24;
-                return (
-                  <line
-                    key={i}
-                    x1={100 + 82 * Math.cos(rad)}
-                    y1={100 + 82 * Math.sin(rad)}
-                    x2={100 + 76 * Math.cos(rad)}
-                    y2={100 + 76 * Math.sin(rad)}
-                    stroke={isRed ? '#ff2a4b' : '#2d3045'}
-                    strokeWidth="1"
-                    strokeLinecap="round"
-                  />
-                );
-              })}
+              {[0, 1, 2, 3, 4, 5, 6, 7, 8].map(
+                (val) => {
+                  const angle =
+                    -135 +
+                    (val / 8) * 270;
 
-              {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((val) => {
-                const angle = -135 + (val / 8) * 270;
-                const rad = (angle * Math.PI) / 180;
-                const isRed = val >= 6;
-                return (
-                  <text
-                    key={val}
-                    x={100 + 57 * Math.cos(rad)}
-                    y={100 + 57 * Math.sin(rad) + 3.5}
-                    textAnchor="middle"
-                    fontSize="8.5"
-                    fontWeight="800"
-                    fill={isRed ? '#ff3a55' : '#6b7280'}
-                    fontFamily="'Inter', sans-serif"
-                  >
-                    {val}
-                  </text>
-                );
-              })}
+                  const rad =
+                    (angle * Math.PI) / 180;
 
-              <circle cx="100" cy="100" r="46" fill="none" stroke="#1d2033" strokeWidth="1" />
+                  const isRedline = val >= 6;
+
+                  return (
+                    <line
+                      key={val}
+                      x1={
+                        100 +
+                        82 * Math.cos(rad)
+                      }
+                      y1={
+                        100 +
+                        82 * Math.sin(rad)
+                      }
+                      x2={
+                        100 +
+                        69 * Math.cos(rad)
+                      }
+                      y2={
+                        100 +
+                        69 * Math.sin(rad)
+                      }
+                      stroke={
+                        isRedline
+                          ? '#ff2a4b'
+                          : '#d0d4e4'
+                      }
+                      strokeWidth={
+                        isRedline ? 2.8 : 2
+                      }
+                      strokeLinecap="round"
+                      opacity={
+                        isRedline ? 1 : 0.85
+                      }
+                    />
+                  );
+                }
+              )}
+
+              {/* Minor RPM ticks */}
+
+              {Array.from({ length: 33 }).map(
+                (_, i) => {
+                  if (i % 4 === 0) {
+                    return null;
+                  }
+
+                  const angle =
+                    -135 +
+                    (i / 32) * 270;
+
+                  const rad =
+                    (angle * Math.PI) / 180;
+
+                  const isRed = i >= 24;
+
+                  return (
+                    <line
+                      key={i}
+                      x1={
+                        100 +
+                        82 * Math.cos(rad)
+                      }
+                      y1={
+                        100 +
+                        82 * Math.sin(rad)
+                      }
+                      x2={
+                        100 +
+                        76 * Math.cos(rad)
+                      }
+                      y2={
+                        100 +
+                        76 * Math.sin(rad)
+                      }
+                      stroke={
+                        isRed
+                          ? '#ff2a4b'
+                          : '#2d3045'
+                      }
+                      strokeWidth="1"
+                      strokeLinecap="round"
+                    />
+                  );
+                }
+              )}
+
+              {/* RPM numbers */}
+
+              {[0, 1, 2, 3, 4, 5, 6, 7, 8].map(
+                (val) => {
+                  const angle =
+                    -135 +
+                    (val / 8) * 270;
+
+                  const rad =
+                    (angle * Math.PI) / 180;
+
+                  const isRed = val >= 6;
+
+                  return (
+                    <text
+                      key={val}
+                      x={
+                        100 +
+                        57 * Math.cos(rad)
+                      }
+                      y={
+                        100 +
+                        57 * Math.sin(rad) +
+                        3.5
+                      }
+                      textAnchor="middle"
+                      fontSize="8.5"
+                      fontWeight="800"
+                      fill={
+                        isRed
+                          ? '#ff3a55'
+                          : '#6b7280'
+                      }
+                      fontFamily="'Inter', sans-serif"
+                    >
+                      {val}
+                    </text>
+                  );
+                }
+              )}
+
+              {/* Inner circle */}
+
+              <circle
+                cx="100"
+                cy="100"
+                r="46"
+                fill="none"
+                stroke="#1d2033"
+                strokeWidth="1"
+              />
+
+              {/* RPM value */}
 
               <text
                 x="100"
@@ -633,7 +1316,7 @@ export default function LoadingCarDetail() {
                 fontFamily="'Inter', sans-serif"
                 filter="url(#glow-soft-g)"
               >
-                {rpm}
+                {clampedRpm}
               </text>
 
               <text
@@ -662,30 +1345,79 @@ export default function LoadingCarDetail() {
                 1/MIN x1000
               </text>
 
+              {/* RPM needle */}
+
               <g
                 className="ke-needle-el"
                 style={{
                   transform: `rotate(${rpmNeedleAngle}deg)`,
-                  transformOrigin: '100px 116px',
+                  transformOrigin:
+                    '100px 116px',
                 }}
               >
-                <polygon points="98,34 102,34 101.2,116 98.8,116" fill="url(#bmw-needle-g)" filter="url(#glow-strong-g)" />
-                <circle cx="100" cy="38" r="2.2" fill="#ffffff" filter="url(#glow-strong-g)" />
+                <polygon
+                  points="98,34 102,34 101.2,116 98.8,116"
+                  fill="url(#bmw-needle-g)"
+                  filter="url(#glow-strong-g)"
+                />
+
+                <circle
+                  cx="100"
+                  cy="38"
+                  r="2.2"
+                  fill="#ffffff"
+                  filter="url(#glow-strong-g)"
+                />
               </g>
 
-              <circle cx="100" cy="116" r="11" fill="#0f101a" stroke="#222538" strokeWidth="2" />
-              <circle cx="100" cy="116" r="6" fill="#0066b1" filter="url(#glow-soft-g)" />
-              <circle cx="100" cy="116" r="2.5" fill="#ffffff" />
-              <circle cx="100" cy="100" r="88" fill="url(#bmw-glass-g)" pointerEvents="none" />
+              {/* RPM needle hub */}
+
+              <circle
+                cx="100"
+                cy="116"
+                r="11"
+                fill="#0f101a"
+                stroke="#222538"
+                strokeWidth="2"
+              />
+
+              <circle
+                cx="100"
+                cy="116"
+                r="6"
+                fill="#0066b1"
+                filter="url(#glow-soft-g)"
+              />
+
+              <circle
+                cx="100"
+                cy="116"
+                r="2.5"
+                fill="#ffffff"
+              />
+
+              {/* Glass reflection */}
+
+              <circle
+                cx="100"
+                cy="100"
+                r="88"
+                fill="url(#bmw-glass-g)"
+                pointerEvents="none"
+              />
             </svg>
           </div>
         </div>
 
-        {/* Status Message */}
+        {/* ─────────────────────────────────────────────────────────────────
+            STATUS MESSAGE
+        ───────────────────────────────────────────────────────────────── */}
+
         <div
           style={{
             marginTop: 26,
-            animation: 'ke-fade-up 0.7s 0.15s ease both',
+            animation:
+              'ke-fade-up 0.7s 0.15s ease both',
             textAlign: 'center',
             zIndex: 10,
           }}
@@ -698,11 +1430,13 @@ export default function LoadingCarDetail() {
               letterSpacing: '0.14em',
               textTransform: 'uppercase',
               color: '#ffffff',
-              textShadow: '0 2px 10px rgba(0,0,0,0.8)',
+              textShadow:
+                '0 2px 10px rgba(0,0,0,0.8)',
             }}
           >
             Loading Vehicle Details
           </p>
+
           <p
             style={{
               margin: '5px 0 0',
@@ -711,18 +1445,23 @@ export default function LoadingCarDetail() {
               fontWeight: 500,
             }}
           >
-            Mode {gear} • {speed} km/h • {rpm} RPM
+            Mode {gear} • {clampedSpeed} km/h •{' '}
+            {clampedRpm} RPM
           </p>
         </div>
 
-        {/* Shimmer Progress Bar */}
+        {/* ─────────────────────────────────────────────────────────────────
+            SHIMMER PROGRESS BAR
+        ───────────────────────────────────────────────────────────────── */}
+
         <div
           style={{
             marginTop: 16,
             width: 260,
             height: 3,
             borderRadius: 3,
-            background: 'rgba(255, 255, 255, 0.15)',
+            background:
+              'rgba(255,255,255,0.15)',
             overflow: 'hidden',
             zIndex: 10,
           }}
@@ -734,7 +1473,8 @@ export default function LoadingCarDetail() {
               backgroundImage:
                 'linear-gradient(90deg, transparent 0%, #ff2a4b 35%, #00d2ff 50%, #ff2a4b 65%, transparent 100%)',
               backgroundSize: '500px 100%',
-              animation: 'ke-shimmer 1.4s linear infinite',
+              animation:
+                'ke-shimmer 1.4s linear infinite',
             }}
           />
         </div>

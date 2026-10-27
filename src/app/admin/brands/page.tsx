@@ -305,7 +305,7 @@ export default function BrandsManagementPage() {
             setBrandLogoUrl('');
             setIsBrandModalOpen(true);
           }}
-          className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold text-xs shadow-lg shadow-red-950 transition flex items-center gap-1.5"
+          className="px-4 py-2.5 rounded-xl bg-zinc-100 hover:bg-white text-zinc-950 font-bold text-xs shadow-md transition flex items-center gap-1.5"
         >
           <span>+ Add New Brand</span>
         </button>
@@ -315,8 +315,8 @@ export default function BrandsManagementPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Brands Panel */}
         <div className="lg:col-span-1 bg-zinc-900 border border-zinc-800 rounded-3xl p-5 shadow-xl space-y-4">
-          <h3 className="text-sm font-extrabold text-white uppercase tracking-wider border-b border-zinc-800 pb-3 flex items-center justify-between">
-            <span>🏷️ Automotive Brands</span>
+          <h3 className="text-xs font-extrabold text-white uppercase tracking-wider border-b border-zinc-800 pb-3 flex items-center justify-between">
+            <span>Automotive Brands</span>
             <span className="px-2 py-0.5 rounded-full bg-zinc-800 text-xs text-zinc-300 font-bold">
               {brands.length}
             </span>
@@ -340,7 +340,7 @@ export default function BrandsManagementPage() {
                     onClick={() => setSelectedBrand(brand)}
                     className={`p-3.5 rounded-2xl border transition cursor-pointer flex items-center justify-between ${
                       isSelected
-                        ? 'bg-zinc-800/90 border-red-500 shadow-md ring-1 ring-red-500/20'
+                        ? 'bg-zinc-800/90 border-zinc-600 shadow-md ring-1 ring-zinc-500/20'
                         : 'bg-zinc-950/50 border-zinc-800/80 hover:border-zinc-700'
                     }`}
                   >
@@ -353,7 +353,7 @@ export default function BrandsManagementPage() {
                             className="w-full h-full object-contain p-1"
                           />
                         ) : (
-                          <span className="font-black text-red-500 text-xs">
+                          <span className="font-black text-zinc-400 text-xs">
                             {brand.name.slice(0, 2).toUpperCase()}
                           </span>
                         )}
@@ -376,10 +376,10 @@ export default function BrandsManagementPage() {
                           setBrandLogoUrl(brand.logo_url || '');
                           setIsBrandModalOpen(true);
                         }}
-                        className="p-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-semibold"
+                        className="px-2 py-1 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[11px] font-semibold"
                         title="Edit brand"
                       >
-                        ✏️
+                        Edit
                       </button>
                       <button
                         type="button"
@@ -387,10 +387,10 @@ export default function BrandsManagementPage() {
                           e.stopPropagation();
                           promptDeleteBrand(brand);
                         }}
-                        className="p-1.5 rounded-lg bg-red-950/60 hover:bg-red-900 text-red-300 text-xs font-semibold"
+                        className="px-2 py-1 rounded-lg bg-zinc-950 hover:bg-red-950 text-zinc-400 hover:text-red-300 text-[11px] font-semibold border border-zinc-800"
                         title="Delete brand"
                       >
-                        🗑️
+                        Delete
                       </button>
                     </div>
                   </div>

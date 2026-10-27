@@ -201,7 +201,7 @@ export default function VehiclesListPage() {
 
         <Link
           href="/admin/vehicles/new"
-          className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold text-xs shadow-lg shadow-red-950 transition flex items-center gap-1.5 self-start sm:self-auto"
+          className="px-5 py-2.5 rounded-xl bg-zinc-100 hover:bg-white text-zinc-950 font-bold text-xs shadow-md transition flex items-center gap-1.5 self-start sm:self-auto"
         >
           <span>+ Add New Vehicle</span>
         </Link>
@@ -218,7 +218,7 @@ export default function VehiclesListPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search make, model, variant..."
-              className="w-full px-3.5 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-xs focus:outline-none focus:border-red-500"
+              className="w-full px-3.5 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-xs focus:outline-none focus:border-zinc-500"
             />
           </div>
 
@@ -228,7 +228,7 @@ export default function VehiclesListPage() {
             <select
               value={selectedBrand}
               onChange={(e) => setSelectedBrand(e.target.value)}
-              className="w-full px-3.5 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-xs focus:outline-none focus:border-red-500"
+              className="w-full px-3.5 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-xs focus:outline-none focus:border-zinc-500"
             >
               <option value="">All Brands</option>
               {brands.map((b) => (
@@ -245,7 +245,7 @@ export default function VehiclesListPage() {
             <select
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
-              className="w-full px-3.5 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-xs focus:outline-none focus:border-red-500"
+              className="w-full px-3.5 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-xs focus:outline-none focus:border-zinc-500"
             >
               <option value="">All Statuses</option>
               <option value="DRAFT">DRAFT</option>
@@ -262,7 +262,7 @@ export default function VehiclesListPage() {
             <select
               value={selectedListingType}
               onChange={(e) => setSelectedListingType(e.target.value)}
-              className="w-full px-3.5 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-xs focus:outline-none focus:border-red-500"
+              className="w-full px-3.5 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-xs focus:outline-none focus:border-zinc-500"
             >
               <option value="">All Listing Types</option>
               <option value="DEALER">DEALER</option>
@@ -280,9 +280,9 @@ export default function VehiclesListPage() {
                 type="checkbox"
                 checked={featuredOnly}
                 onChange={(e) => setFeaturedOnly(e.target.checked)}
-                className="w-4 h-4 rounded accent-red-600"
+                className="w-4 h-4 rounded accent-zinc-500"
               />
-              <span>⭐ Featured Only</span>
+              <span>Featured Only</span>
             </label>
 
             <select
@@ -314,7 +314,7 @@ export default function VehiclesListPage() {
               className="px-2.5 py-1.5 rounded-lg bg-zinc-800 text-white text-xs font-bold"
               title="Toggle sort direction"
             >
-              {sortOrder === 'asc' ? '▲ ASC' : '▼ DESC'}
+              {sortOrder === 'asc' ? 'ASC' : 'DESC'}
             </button>
           </div>
         </div>
@@ -325,14 +325,13 @@ export default function VehiclesListPage() {
         <TableSkeleton rows={6} />
       ) : vehicles.length === 0 ? (
         <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-12 text-center space-y-3 shadow-xl">
-          <span className="text-4xl">🚘</span>
           <h3 className="text-lg font-bold text-white">No vehicles found</h3>
           <p className="text-xs text-zinc-400">
             No listings match your search or active filter settings.
           </p>
           <Link
             href="/admin/vehicles/new"
-            className="inline-block mt-2 px-4 py-2 rounded-xl bg-red-600 text-white text-xs font-bold"
+            className="inline-block mt-2 px-4 py-2 rounded-xl bg-zinc-100 text-zinc-950 text-xs font-bold"
           >
             Add New Vehicle
           </Link>

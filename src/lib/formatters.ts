@@ -33,6 +33,9 @@ export function generateSlug(
     .trim();
 }
 
+export const DEFAULT_PHONE_NUMBER = '0795492656';
+export const WHATSAPP_GROUP_URL = 'https://chat.whatsapp.com/Cp4SLmBH3LyBz0LETF5v7e';
+
 /**
  * Cleans phone number and returns a WhatsApp click-to-chat URL
  */

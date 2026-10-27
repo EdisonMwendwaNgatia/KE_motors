@@ -72,29 +72,19 @@ export default function AdminLoginPage() {
 
   return (
     <div className="min-h-screen bg-zinc-950 flex flex-col items-center justify-center p-4">
-      {/* Subtle Background Radial Accent */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-red-950/30 via-zinc-950 to-zinc-950 pointer-events-none" />
-
-      <div className="relative w-full max-w-md bg-zinc-900/90 border border-zinc-800/90 rounded-3xl p-8 shadow-2xl backdrop-blur-xl space-y-6">
-        {/* Brand Header */}
-        <div className="text-center space-y-2 flex flex-col items-center">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/assets/images/KE_logoB.png"
-            alt="KE Motors Logo"
-            className="h-14 w-auto object-contain mb-1"
-          />
-          <h1 className="text-2xl font-black tracking-tight text-white">KE MOTORS</h1>
-          <p className="text-xs font-semibold text-zinc-400 uppercase tracking-widest">
-            Dealership Administration Portal
-          </p>
+      <div className="w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-3xl p-8 shadow-2xl space-y-6">
+        {/* Brand Header without logo image */}
+        <div className="text-center space-y-1.5 flex flex-col items-center">
+          <h1 className="text-3xl font-black tracking-wider text-white">KE MOTORS</h1>
+          <div className="inline-block px-2.5 py-0.5 text-[10px] font-extrabold rounded bg-zinc-800 text-zinc-400 border border-zinc-700/60 uppercase tracking-widest">
+            DEALERSHIP MANAGEMENT PORTAL
+          </div>
         </div>
 
         {errorMsg && (
-          <div className="p-4 rounded-2xl bg-red-950/70 border border-red-800/60 text-red-200 text-xs font-medium space-y-1 animate-in fade-in">
-            <div className="flex items-center gap-2 font-bold text-red-400">
-              <span>⚠️</span>
-              <span>Authentication Error</span>
+          <div className="p-4 rounded-2xl bg-zinc-950 border border-red-900/60 text-red-300 text-xs font-medium space-y-1 animate-in fade-in">
+            <div className="font-bold text-red-400">
+              Authentication Error
             </div>
             <p>{errorMsg}</p>
           </div>
@@ -111,7 +101,7 @@ export default function AdminLoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="admin@kemotors.co.ke"
-              className="w-full px-4 py-3 rounded-xl bg-zinc-950/70 border border-zinc-800 text-white placeholder-zinc-600 text-sm focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition"
+              className="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-white placeholder-zinc-600 text-sm focus:outline-none focus:border-zinc-500 transition"
             />
           </div>
 
@@ -125,18 +115,18 @@ export default function AdminLoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••••••"
-              className="w-full px-4 py-3 rounded-xl bg-zinc-950/70 border border-zinc-800 text-white placeholder-zinc-600 text-sm focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition"
+              className="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-white placeholder-zinc-600 text-sm focus:outline-none focus:border-zinc-500 transition"
             />
           </div>
 
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3.5 px-4 rounded-xl font-bold text-sm text-white bg-gradient-to-r from-red-600 via-red-600 to-red-700 hover:from-red-500 hover:to-red-600 shadow-xl shadow-red-950/60 transition transform active:scale-[0.99] disabled:opacity-60 flex items-center justify-center gap-2"
+            className="w-full py-3.5 px-4 rounded-xl font-bold text-sm text-zinc-950 bg-zinc-100 hover:bg-white shadow-md transition transform active:scale-[0.99] disabled:opacity-60 flex items-center justify-center gap-2"
           >
             {isLoading ? (
               <>
-                <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                <span className="w-4 h-4 border-2 border-zinc-950/40 border-t-zinc-950 rounded-full animate-spin" />
                 <span>Authenticating...</span>
               </>
             ) : (

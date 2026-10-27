@@ -84,10 +84,7 @@ export default async function BrandSlugPage({ params }: PageProps) {
           )}
 
           <div>
-            <span className="text-xs font-bold text-red-600 uppercase tracking-widest block">
-              Verified Brand Inventory
-            </span>
-            <h1 className="text-3xl font-black text-slate-900 tracking-tight mt-0.5">
+            <h1 className="text-3xl font-black text-slate-900 tracking-tight">
               {brand.name} Cars For Sale
             </h1>
             <p className="text-xs font-medium text-slate-500 mt-1">

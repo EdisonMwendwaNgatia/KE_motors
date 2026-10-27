@@ -56,25 +56,25 @@ export default async function DashboardPage() {
   const recentInquiries: Inquiry[] = (recentInquiriesData as any[]) || [];
 
   const statCards = [
-    { label: 'Total Vehicles', value: totalVehicles || 0, icon: '🚘', color: 'border-zinc-800 bg-zinc-900/90' },
-    { label: 'Published', value: publishedCount || 0, icon: '🟢', color: 'border-emerald-800/40 bg-emerald-950/20' },
-    { label: 'Pending Verification', value: pendingVerificationCount || 0, icon: '⏳', color: 'border-amber-800/40 bg-amber-950/20' },
-    { label: 'Sold', value: soldCount || 0, icon: '🏷️', color: 'border-blue-800/40 bg-blue-950/20' },
-    { label: 'Reserved', value: reservedCount || 0, icon: '🔒', color: 'border-purple-800/40 bg-purple-950/20' },
-    { label: 'Total Inquiries', value: totalInquiries || 0, icon: '💬', color: 'border-sky-800/40 bg-sky-950/20' },
-    { label: 'Featured Vehicles', value: featuredCount || 0, icon: '⭐', color: 'border-yellow-800/40 bg-yellow-950/20' },
+    { label: 'Total Vehicles', value: totalVehicles || 0, color: 'border-zinc-800 bg-zinc-900' },
+    { label: 'Published', value: publishedCount || 0, color: 'border-emerald-800/40 bg-zinc-900' },
+    { label: 'Pending Verification', value: pendingVerificationCount || 0, color: 'border-amber-800/40 bg-zinc-900' },
+    { label: 'Sold', value: soldCount || 0, color: 'border-blue-800/40 bg-zinc-900' },
+    { label: 'Reserved', value: reservedCount || 0, color: 'border-purple-800/40 bg-zinc-900' },
+    { label: 'Total Inquiries', value: totalInquiries || 0, color: 'border-sky-800/40 bg-zinc-900' },
+    { label: 'Featured Vehicles', value: featuredCount || 0, color: 'border-rose-800/40 bg-zinc-900' },
   ];
 
   return (
     <div className="space-y-8 animate-in fade-in">
       {/* Top Welcome Header & Quick Actions */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-zinc-900 via-zinc-900 to-red-950/30 p-6 rounded-3xl border border-zinc-800 shadow-2xl">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-zinc-900 p-6 rounded-3xl border border-zinc-800 shadow-xl">
         <div className="space-y-1">
           <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight">
             Dealership Overview
           </h1>
           <p className="text-xs text-zinc-400">
-            Real-time telemetry and management controls for KE Motors fleet.
+            Real-time management metrics and controls for KE Motors fleet.
           </p>
         </div>
 
@@ -82,26 +82,25 @@ export default async function DashboardPage() {
         <div className="flex flex-wrap items-center gap-2">
           <Link
             href="/admin/vehicles/new"
-            className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold text-xs shadow-lg shadow-red-950/60 transition flex items-center gap-1.5"
+            className="px-4 py-2.5 rounded-xl bg-zinc-100 hover:bg-white text-zinc-950 font-bold text-xs shadow-md transition flex items-center gap-1.5"
           >
-            <span>+</span>
-            <span>Add Vehicle</span>
+            <span>+ Add Vehicle</span>
           </Link>
           <Link
             href="/admin/vehicles"
-            className="px-4 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-bold text-xs transition"
+            className="px-4 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-bold text-xs border border-zinc-700/60 transition"
           >
             Manage Vehicles
           </Link>
           <Link
             href="/admin/inquiries"
-            className="px-4 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-bold text-xs transition"
+            className="px-4 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-bold text-xs border border-zinc-700/60 transition"
           >
             View Inquiries
           </Link>
           <Link
             href="/admin/brands"
-            className="px-4 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-bold text-xs transition"
+            className="px-4 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-bold text-xs border border-zinc-700/60 transition"
           >
             Manage Brands
           </Link>
@@ -113,13 +112,12 @@ export default async function DashboardPage() {
         {statCards.map((card) => (
           <div
             key={card.label}
-            className={`p-5 rounded-2xl border ${card.color} shadow-xl backdrop-blur-md flex flex-col justify-between space-y-2`}
+            className={`p-5 rounded-2xl border ${card.color} shadow-lg flex flex-col justify-between space-y-2`}
           >
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider">
+              <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider">
                 {card.label}
               </span>
-              <span className="text-lg">{card.icon}</span>
             </div>
             <div className="text-3xl font-black text-white tracking-tight">
               {card.value.toLocaleString()}
@@ -134,14 +132,14 @@ export default async function DashboardPage() {
         <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 shadow-xl space-y-4 flex flex-col">
           <div className="flex items-center justify-between border-b border-zinc-800 pb-4">
             <div>
-              <h2 className="text-lg font-extrabold text-white flex items-center gap-2">
-                <span>🚗</span> Recent Vehicle Listings
+              <h2 className="text-base font-extrabold text-white">
+                Recent Vehicle Listings
               </h2>
               <p className="text-xs text-zinc-400">Latest additions to the dealership inventory</p>
             </div>
             <Link
               href="/admin/vehicles"
-              className="text-xs font-bold text-red-400 hover:text-red-300 transition"
+              className="text-xs font-bold text-zinc-300 hover:text-white transition"
             >
               View All →
             </Link>
@@ -208,14 +206,14 @@ export default async function DashboardPage() {
         <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 shadow-xl space-y-4 flex flex-col">
           <div className="flex items-center justify-between border-b border-zinc-800 pb-4">
             <div>
-              <h2 className="text-lg font-extrabold text-white flex items-center gap-2">
-                <span>💬</span> Recent Customer Inquiries
+              <h2 className="text-base font-extrabold text-white">
+                Recent Customer Inquiries
               </h2>
               <p className="text-xs text-zinc-400">Buyer requests and contact submissions</p>
             </div>
             <Link
               href="/admin/inquiries"
-              className="text-xs font-bold text-red-400 hover:text-red-300 transition"
+              className="text-xs font-bold text-zinc-300 hover:text-white transition"
             >
               View All →
             </Link>

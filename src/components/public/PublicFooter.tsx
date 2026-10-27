@@ -96,19 +96,19 @@ export function PublicFooter() {
               </li>
               <li className="flex items-center gap-2.5">
                 <span className="text-base">📞</span>
-                <a href="tel:+254700000000" className="hover:text-white transition font-mono">
-                  +254 700 000000
+                <a href="tel:0795492656" className="hover:text-white transition font-mono">
+                  0795492656
                 </a>
               </li>
               <li className="flex items-center gap-2.5">
                 <span className="text-base">💬</span>
                 <a
-                  href="https://wa.me/254700000000"
+                  href="https://chat.whatsapp.com/Cp4SLmBH3LyBz0LETF5v7e"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-emerald-400 transition font-mono"
+                  className="hover:text-emerald-400 transition"
                 >
-                  WhatsApp Support
+                  Join WhatsApp Group
                 </a>
               </li>
               <li className="flex items-center gap-2.5">
