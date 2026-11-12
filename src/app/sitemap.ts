@@ -1,7 +1,6 @@
 import { MetadataRoute } from 'next';
 import { createClient } from '@/lib/supabase/server';
-
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://kemotors.co.ke';
+import { SITE_URL } from '@/lib/site';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = await createClient();
@@ -14,37 +13,31 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/sell',
     '/about',
     '/contact',
-    '/favorites',
   ].map((route) => ({
-    url: `${BASE_URL}${route}`,
-    lastModified: new Date(),
-    changeFrequency: 'daily' as const,
-    priority: route === '' ? 1.0 : 0.8,
+    url: `${SITE_URL}${route}`,
   }));
 
   // Dynamic vehicle pages
   const { data: vehicles } = await supabase
     .from('vehicles')
-    .select('slug, updated_at')
+    .select('slug, updated_at, brand_id')
     .eq('status', 'PUBLISHED')
     .eq('verification_status', 'VERIFIED');
 
   const vehicleRoutes = (vehicles || []).map((v) => ({
-    url: `${BASE_URL}/cars/${v.slug}`,
-    lastModified: v.updated_at ? new Date(v.updated_at) : new Date(),
-    changeFrequency: 'weekly' as const,
-    priority: 0.9,
+    url: `${SITE_URL}/cars/${v.slug}`,
+    ...(v.updated_at ? { lastModified: new Date(v.updated_at) } : {}),
   }));
 
   // Dynamic brand pages
-  const { data: brands } = await supabase.from('brands').select('slug');
+  const activeBrandIds = new Set((vehicles || []).map((vehicle) => vehicle.brand_id));
+  const { data: brands } = await supabase.from('brands').select('id, slug');
 
-  const brandRoutes = (brands || []).map((b) => ({
-    url: `${BASE_URL}/brands/${b.slug}`,
-    lastModified: new Date(),
-    changeFrequency: 'weekly' as const,
-    priority: 0.7,
-  }));
+  const brandRoutes = (brands || [])
+    .filter((brand) => activeBrandIds.has(brand.id))
+    .map((b) => ({
+      url: `${SITE_URL}/brands/${b.slug}`,
+    }));
 
   return [...routes, ...vehicleRoutes, ...brandRoutes];
 }

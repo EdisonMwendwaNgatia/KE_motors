@@ -2,8 +2,9 @@ import React from 'react';
 import Link from 'next/link';
 
 export const metadata = {
-  title: 'About KE Motors — Verified Automotive Marketplace',
+  title: 'About KE Motors',
   description: 'Learn about KE Motors, Kenya’s transparent vehicle marketplace connecting buyers with verified bank repossessions, direct owner cars, and selected dealers.',
+  alternates: { canonical: '/about' },
 };
 
 export default function AboutPage() {

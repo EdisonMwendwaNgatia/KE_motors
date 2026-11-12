@@ -7,9 +7,10 @@ import { WHATSAPP_GROUP_URL } from '@/lib/formatters';
 import { MobileSearchDisclosure } from '@/components/public/MobileSearchDisclosure';
 
 export const metadata = {
-  title: 'KE Motors — Find Your Next Car With Confidence',
+  title: 'Find Your Next Car With Confidence',
   description:
     'Kenya’s premier marketplace for verified bank repossessions, direct owner deals, and selected dealer vehicles.',
+  alternates: { canonical: '/' },
 };
 
 export default async function HomePage() {

@@ -3,8 +3,9 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 
 export const metadata = {
-  title: 'Vehicle Brands Directory | KE Motors',
+  title: 'Vehicle Brands Directory',
   description: 'Explore verified vehicles by brand — Toyota, Subaru, Mazda, Honda, BMW, Audi and more.',
+  alternates: { canonical: '/brands' },
 };
 
 export default async function BrandsPage() {

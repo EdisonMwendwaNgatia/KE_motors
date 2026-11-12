@@ -22,13 +22,21 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (!brand) {
     return {
-      title: 'Brand Not Found | KE Motors',
+      title: 'Brand Not Found',
+      robots: { index: false, follow: false },
     };
   }
 
   return {
-    title: `${brand.name} Cars For Sale | KE Motors`,
+    title: `${brand.name} Cars For Sale`,
     description: `Browse verified ${brand.name} vehicles for sale in Kenya, including bank repossessions and direct owner deals.`,
+    alternates: { canonical: `/brands/${slug}` },
+    openGraph: {
+      type: 'website',
+      title: `${brand.name} Cars For Sale`,
+      description: `Browse verified ${brand.name} vehicles for sale in Kenya, including bank repossessions and direct owner deals.`,
+      url: `/brands/${slug}`,
+    },
   };
 }
 

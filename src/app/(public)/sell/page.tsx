@@ -2,8 +2,9 @@ import React from 'react';
 import { InquiryForm } from '@/components/public/InquiryForm';
 
 export const metadata = {
-  title: 'Sell Your Car | KE Motors Vehicle Marketplace',
+  title: 'Sell Your Car in Kenya',
   description: 'List your vehicle with KE Motors. We review and verify listings from direct owners and verified dealers.',
+  alternates: { canonical: '/sell' },
 };
 
 export default function SellPage() {

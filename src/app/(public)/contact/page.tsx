@@ -3,8 +3,9 @@ import { InquiryForm } from '@/components/public/InquiryForm';
 import { DEFAULT_PHONE_NUMBER, WHATSAPP_GROUP_URL } from '@/lib/formatters';
 
 export const metadata = {
-  title: 'Contact Us | KE Motors Vehicle Marketplace',
+  title: 'Contact KE Motors',
   description: 'Get in touch with KE Motors via phone, WhatsApp, email, or visit us along Kiambu Road, Nairobi.',
+  alternates: { canonical: '/contact' },
 };
 
 const PHONE_NUMBER = DEFAULT_PHONE_NUMBER;

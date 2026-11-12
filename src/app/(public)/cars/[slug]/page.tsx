@@ -57,14 +57,23 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   if (!vehicle) {
     return {
-      title: 'Vehicle Not Found | KE Motors',
+      title: 'Vehicle Not Found',
       description: 'The requested vehicle could not be found on KE Motors.',
+      robots: { index: false, follow: false },
+    };
+  }
+
+  if (vehicle.status !== 'PUBLISHED' || vehicle.verification_status !== 'VERIFIED') {
+    return {
+      title: 'Vehicle Unavailable',
+      description: 'This vehicle listing is not currently available.',
+      robots: { index: false, follow: false },
     };
   }
 
   const brandName = vehicle.brand?.name || '';
   const modelName = vehicle.model?.name || '';
-  const title = `${brandName} ${modelName} ${vehicle.year || ''} ${vehicle.transmission || ''} — ${formatKSH(vehicle.price)} | KE Motors`.trim();
+  const title = `${brandName} ${modelName} ${vehicle.year || ''} ${vehicle.transmission || ''} — ${formatKSH(vehicle.price)}`.trim();
   const description = vehicle.description
     ? vehicle.description.substring(0, 160)
     : `View detailed specs, features, and photos for ${title} on KE Motors.`;
@@ -75,10 +84,19 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return {
     title,
     description,
+    alternates: { canonical: `/cars/${vehicle.slug}` },
     openGraph: {
+      type: 'website',
       title,
       description,
+      url: `/cars/${vehicle.slug}`,
       images: ogImageUrl ? [{ url: ogImageUrl }] : [],
+    },
+    twitter: {
+      card: ogImageUrl ? 'summary_large_image' : 'summary',
+      title,
+      description,
+      images: ogImageUrl ? [ogImageUrl] : [],
     },
   };
 }

@@ -408,6 +408,12 @@ export default function VehiclesListPage() {
                         <span className="inline-block px-2 py-0.5 text-[10px] font-semibold rounded bg-zinc-800 text-zinc-300">
                           {vehicle.listing_type}
                         </span>
+                        <div className="max-w-44 truncate text-[11px] text-zinc-300" title={vehicle.source_name || 'N/A'}>
+                          {vehicle.source_name || 'N/A'}
+                        </div>
+                        <div className="text-[11px] text-zinc-400">
+                          {vehicle.source_phone || 'N/A'}
+                        </div>
                         <div>
                           <span className={`inline-block px-2 py-0.5 text-[10px] font-bold rounded ${
                             vehicle.verification_status === 'VERIFIED'
