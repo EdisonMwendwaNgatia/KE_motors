@@ -124,6 +124,17 @@ export function PublicFooter() {
 
         <div className="mt-12 pt-8 border-t border-slate-800/80 text-center text-xs text-slate-500">
           <p>© 2026 KE Motors. All rights reserved.</p>
+          <p className="mt-2">
+            Built by{' '}
+            <a
+              href="https://edigence-labs.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold text-slate-300 transition hover:text-white hover:underline"
+            >
+              Edigence Labs
+            </a>
+          </p>
         </div>
       </div>
     </footer>
