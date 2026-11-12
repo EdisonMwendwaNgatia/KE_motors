@@ -66,6 +66,45 @@ body {
   overflow-x: hidden;
 }
 
+.admin-select {
+  width: 100%;
+  appearance: none;
+  border: 1px solid #3f3f46;
+  border-radius: 0.75rem;
+  background-color: #09090b;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Cpath d='m5 7.5 5 5 5-5' stroke='%23a1a1aa' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.9rem center;
+  background-size: 1rem;
+  padding: 0.75rem 2.75rem 0.75rem 1rem;
+  color: #fafafa;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  transition: border-color 150ms ease, box-shadow 150ms ease, background-color 150ms ease;
+  cursor: pointer;
+}
+
+.admin-select:hover {
+  border-color: #71717a;
+  background-color: #18181b;
+}
+
+.admin-select:focus-visible {
+  outline: none;
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgb(239 68 68 / 18%);
+}
+
+.admin-select:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.admin-select option {
+  background-color: #18181b;
+  color: #fafafa;
+}
+
 /* Custom scrollbar for gallery and drawers */
 ::-webkit-scrollbar {
   width: 6px;

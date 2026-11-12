@@ -263,7 +263,7 @@ export function VehicleForm({ initialVehicle, brands, initialModels = [] }: Vehi
             <select
               value={brandId}
               onChange={(e) => setBrandId(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:outline-none focus:border-red-500"
+              className="admin-select"
             >
               <option value="" disabled>Select Brand</option>
               {brands.map((b) => (
@@ -282,7 +282,7 @@ export function VehicleForm({ initialVehicle, brands, initialModels = [] }: Vehi
             <select
               value={modelId}
               onChange={(e) => setModelId(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:outline-none focus:border-red-500"
+              className="admin-select"
             >
               <option value="" disabled>
                 {models.length === 0 ? 'No models available for brand' : 'Select Model'}
@@ -305,7 +305,7 @@ export function VehicleForm({ initialVehicle, brands, initialModels = [] }: Vehi
               value={variant}
               onChange={(e) => setVariant(e.target.value)}
               placeholder="e.g. 2.0 AWD, Hybrid Package, M-Sport"
-              className="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:outline-none focus:border-red-500"
+              className="admin-select"
             />
           </div>
 
@@ -320,7 +320,7 @@ export function VehicleForm({ initialVehicle, brands, initialModels = [] }: Vehi
               max={new Date().getFullYear() + 2}
               value={year}
               onChange={(e) => setYear(Number(e.target.value))}
-              className="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:outline-none focus:border-red-500"
+              className="admin-select"
             />
           </div>
         </div>
@@ -344,7 +344,7 @@ export function VehicleForm({ initialVehicle, brands, initialModels = [] }: Vehi
               value={price || ''}
               onChange={(e) => setPrice(Number(e.target.value))}
               placeholder="e.g. 1680000"
-              className="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:outline-none focus:border-red-500"
+              className="admin-select"
             />
           </div>
 
@@ -376,7 +376,7 @@ export function VehicleForm({ initialVehicle, brands, initialModels = [] }: Vehi
               value={mileage}
               onChange={(e) => setMileage(e.target.value === '' ? '' : Number(e.target.value))}
               placeholder="e.g. 75000"
-              className="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:outline-none focus:border-red-500"
+              className="admin-select"
             />
           </div>
 
@@ -387,7 +387,7 @@ export function VehicleForm({ initialVehicle, brands, initialModels = [] }: Vehi
             <select
               value={fuelType}
               onChange={(e) => setFuelType(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:outline-none focus:border-red-500"
+              className="admin-select"
             >
               <option value="Petrol">Petrol</option>
               <option value="Diesel">Diesel</option>
