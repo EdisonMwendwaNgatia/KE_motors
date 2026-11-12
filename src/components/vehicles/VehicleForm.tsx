@@ -8,6 +8,7 @@ import { Brand, Model, Vehicle, ListingType, VehicleStatus, VerificationStatus }
 import { formatKSH, generateSlug } from '@/lib/formatters';
 import { FeatureManager } from './FeatureManager';
 import { ImageUploader, ImageItem } from './ImageUploader';
+import { AdminSelect } from './AdminSelect';
 
 interface VehicleFormProps {
   initialVehicle?: Vehicle;
@@ -260,18 +261,12 @@ export function VehicleForm({ initialVehicle, brands, initialModels = [] }: Vehi
             <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">
               Brand / Make <span className="text-red-500">*</span>
             </label>
-            <select
+            <AdminSelect
+              aria-label="Brand / Make"
               value={brandId}
-              onChange={(e) => setBrandId(e.target.value)}
-              className="admin-select"
-            >
-              <option value="" disabled>Select Brand</option>
-              {brands.map((b) => (
-                <option key={b.id} value={b.id}>
-                  {b.name}
-                </option>
-              ))}
-            </select>
+              onChange={setBrandId}
+              options={[{ value: '', label: 'Select Brand', disabled: true }, ...brands.map((b) => ({ value: b.id, label: b.name }))]}
+            />
           </div>
 
           {/* Model */}
@@ -279,20 +274,15 @@ export function VehicleForm({ initialVehicle, brands, initialModels = [] }: Vehi
             <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">
               Model <span className="text-red-500">*</span>
             </label>
-            <select
+            <AdminSelect
+              aria-label="Model"
               value={modelId}
-              onChange={(e) => setModelId(e.target.value)}
-              className="admin-select"
-            >
-              <option value="" disabled>
-                {models.length === 0 ? 'No models available for brand' : 'Select Model'}
-              </option>
-              {models.map((m) => (
-                <option key={m.id} value={m.id}>
-                  {m.name}
-                </option>
-              ))}
-            </select>
+              onChange={setModelId}
+              options={[
+                { value: '', label: models.length === 0 ? 'No models available for brand' : 'Select Model', disabled: true },
+                ...models.map((m) => ({ value: m.id, label: m.name })),
+              ]}
+            />
           </div>
 
           {/* Variant */}
@@ -305,7 +295,7 @@ export function VehicleForm({ initialVehicle, brands, initialModels = [] }: Vehi
               value={variant}
               onChange={(e) => setVariant(e.target.value)}
               placeholder="e.g. 2.0 AWD, Hybrid Package, M-Sport"
-              className="admin-select"
+              className="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:outline-none focus:border-red-500"
             />
           </div>
 
@@ -320,7 +310,7 @@ export function VehicleForm({ initialVehicle, brands, initialModels = [] }: Vehi
               max={new Date().getFullYear() + 2}
               value={year}
               onChange={(e) => setYear(Number(e.target.value))}
-              className="admin-select"
+              className="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:outline-none focus:border-red-500"
             />
           </div>
         </div>
@@ -344,7 +334,7 @@ export function VehicleForm({ initialVehicle, brands, initialModels = [] }: Vehi
               value={price || ''}
               onChange={(e) => setPrice(Number(e.target.value))}
               placeholder="e.g. 1680000"
-              className="admin-select"
+              className="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:outline-none focus:border-red-500"
             />
           </div>
 
@@ -376,7 +366,7 @@ export function VehicleForm({ initialVehicle, brands, initialModels = [] }: Vehi
               value={mileage}
               onChange={(e) => setMileage(e.target.value === '' ? '' : Number(e.target.value))}
               placeholder="e.g. 75000"
-              className="admin-select"
+              className="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:outline-none focus:border-red-500"
             />
           </div>
 
@@ -384,31 +374,24 @@ export function VehicleForm({ initialVehicle, brands, initialModels = [] }: Vehi
             <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">
               Fuel Type
             </label>
-            <select
+            <AdminSelect
+              aria-label="Fuel Type"
               value={fuelType}
-              onChange={(e) => setFuelType(e.target.value)}
-              className="admin-select"
-            >
-              <option value="Petrol">Petrol</option>
-              <option value="Diesel">Diesel</option>
-              <option value="Hybrid">Hybrid</option>
-              <option value="Electric">Electric</option>
-            </select>
+              onChange={setFuelType}
+              options={['Petrol', 'Diesel', 'Hybrid', 'Electric'].map((value) => ({ value, label: value }))}
+            />
           </div>
 
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">
               Transmission
             </label>
-            <select
+            <AdminSelect
+              aria-label="Transmission"
               value={transmission}
-              onChange={(e) => setTransmission(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:outline-none focus:border-red-500"
-            >
-              <option value="Automatic">Automatic</option>
-              <option value="Manual">Manual</option>
-              <option value="CVT">CVT</option>
-            </select>
+              onChange={setTransmission}
+              options={['Automatic', 'Manual', 'CVT'].map((value) => ({ value, label: value }))}
+            />
           </div>
 
           <div className="space-y-1.5">
@@ -428,19 +411,12 @@ export function VehicleForm({ initialVehicle, brands, initialModels = [] }: Vehi
             <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">
               Body Type
             </label>
-            <select
+            <AdminSelect
+              aria-label="Body Type"
               value={bodyType}
-              onChange={(e) => setBodyType(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:outline-none focus:border-red-500"
-            >
-              <option value="SUV">SUV</option>
-              <option value="Sedan">Sedan</option>
-              <option value="Hatchback">Hatchback</option>
-              <option value="Pickup">Pickup</option>
-              <option value="Station Wagon">Station Wagon</option>
-              <option value="Coupe">Coupe</option>
-              <option value="Van / Bus">Van / Bus</option>
-            </select>
+              onChange={setBodyType}
+              options={['SUV', 'Sedan', 'Hatchback', 'Pickup', 'Station Wagon', 'Coupe', 'Van / Bus'].map((value) => ({ value, label: value }))}
+            />
           </div>
 
           <div className="space-y-1.5">
@@ -469,15 +445,16 @@ export function VehicleForm({ initialVehicle, brands, initialModels = [] }: Vehi
             <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">
               Listing Type
             </label>
-            <select
+            <AdminSelect
+              aria-label="Listing Type"
               value={listingType}
-              onChange={(e) => setListingType(e.target.value as ListingType)}
-              className="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:outline-none focus:border-red-500"
-            >
-              <option value="DEALER">DEALER</option>
-              <option value="DIRECT_OWNER">DIRECT_OWNER</option>
-              <option value="BANK_REPOSSESSED">BANK_REPOSSESSED</option>
-            </select>
+              onChange={(value) => setListingType(value as ListingType)}
+              options={[
+                { value: 'DEALER', label: 'Dealer' },
+                { value: 'DIRECT_OWNER', label: 'Direct Owner' },
+                { value: 'BANK_REPOSSESSED', label: 'Bank Repossessed' },
+              ]}
+            />
           </div>
 
           <div className="space-y-1.5">
@@ -512,32 +489,24 @@ export function VehicleForm({ initialVehicle, brands, initialModels = [] }: Vehi
             <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">
               Publication Status
             </label>
-            <select
+            <AdminSelect
+              aria-label="Publication Status"
               value={status}
-              onChange={(e) => setStatus(e.target.value as VehicleStatus)}
-              className="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:outline-none focus:border-red-500"
-            >
-              <option value="DRAFT">DRAFT</option>
-              <option value="PUBLISHED">PUBLISHED</option>
-              <option value="RESERVED">RESERVED</option>
-              <option value="SOLD">SOLD</option>
-              <option value="ARCHIVED">ARCHIVED</option>
-            </select>
+              onChange={(value) => setStatus(value as VehicleStatus)}
+              options={['DRAFT', 'PUBLISHED', 'RESERVED', 'SOLD', 'ARCHIVED'].map((value) => ({ value, label: value }))}
+            />
           </div>
 
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">
               Verification Status
             </label>
-            <select
+            <AdminSelect
+              aria-label="Verification Status"
               value={verificationStatus}
-              onChange={(e) => setVerificationStatus(e.target.value as VerificationStatus)}
-              className="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:outline-none focus:border-red-500"
-            >
-              <option value="PENDING">PENDING</option>
-              <option value="VERIFIED">VERIFIED</option>
-              <option value="REJECTED">REJECTED</option>
-            </select>
+              onChange={(value) => setVerificationStatus(value as VerificationStatus)}
+              options={['PENDING', 'VERIFIED', 'REJECTED'].map((value) => ({ value, label: value }))}
+            />
           </div>
 
           <div className="flex items-center justify-between p-4 rounded-xl bg-zinc-950 border border-zinc-800">
