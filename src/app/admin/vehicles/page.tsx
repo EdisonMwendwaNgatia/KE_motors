@@ -378,6 +378,13 @@ export default function VehiclesListPage() {
                           <div className="min-w-0">
                             <h4 className="font-bold text-white text-sm truncate">{title || 'Untitled Vehicle'}</h4>
                             <span className="text-[11px] text-zinc-500">{vehicle.location || 'Nairobi'}</span>
+                            <div className="text-[11px] text-zinc-500">
+                              Listed {new Date(vehicle.created_at).toLocaleDateString('en-KE', {
+                                day: 'numeric',
+                                month: 'short',
+                                year: 'numeric',
+                              })}
+                            </div>
                           </div>
                         </div>
                       </td>

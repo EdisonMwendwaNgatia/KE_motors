@@ -37,6 +37,8 @@ export function VehicleForm({ initialVehicle, brands, initialModels = [] }: Vehi
   const [location, setLocation] = useState(initialVehicle?.location || 'Nairobi');
   const [description, setDescription] = useState(initialVehicle?.description || '');
   const [listingType, setListingType] = useState<ListingType>((initialVehicle?.listing_type as ListingType) || 'DEALER');
+  const [sourceName, setSourceName] = useState(initialVehicle?.source_name || '');
+  const [sourcePhone, setSourcePhone] = useState(initialVehicle?.source_phone || '');
   const [status, setStatus] = useState<VehicleStatus>((initialVehicle?.status as VehicleStatus) || 'DRAFT');
   const [verificationStatus, setVerificationStatus] = useState<VerificationStatus>((initialVehicle?.verification_status as VerificationStatus) || 'PENDING');
   const [isFeatured, setIsFeatured] = useState<boolean>(initialVehicle?.is_featured || false);
@@ -104,6 +106,10 @@ export function VehicleForm({ initialVehicle, brands, initialModels = [] }: Vehi
       showToast('Validation Error', 'Please enter a positive vehicle price.', 'error');
       return;
     }
+    if (!sourceName.trim() || !sourcePhone.trim()) {
+      showToast('Validation Error', 'Please enter the listing source name and phone number.', 'error');
+      return;
+    }
 
     const selectedBrand = brands.find((b) => b.id === brandId);
     const selectedModel = models.find((m) => m.id === modelId);
@@ -132,6 +138,8 @@ export function VehicleForm({ initialVehicle, brands, initialModels = [] }: Vehi
         location: location || null,
         description: description || null,
         listing_type: listingType,
+        source_name: sourceName.trim(),
+        source_phone: sourcePhone.trim(),
         status: status,
         verification_status: verificationStatus,
         is_featured: isFeatured,
@@ -456,7 +464,7 @@ export function VehicleForm({ initialVehicle, brands, initialModels = [] }: Vehi
           <span>🏷️</span> Listing & Status Settings
         </h3>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">
               Listing Type
@@ -470,6 +478,34 @@ export function VehicleForm({ initialVehicle, brands, initialModels = [] }: Vehi
               <option value="DIRECT_OWNER">DIRECT_OWNER</option>
               <option value="BANK_REPOSSESSED">BANK_REPOSSESSED</option>
             </select>
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">
+              {listingType === 'DEALER' ? 'Dealer Name' : listingType === 'DIRECT_OWNER' ? 'Owner Name' : 'Bank / Institution Name'}
+            </label>
+            <input
+              type="text"
+              value={sourceName}
+              onChange={(e) => setSourceName(e.target.value)}
+              placeholder={listingType === 'DEALER' ? 'Enter dealer or dealership name' : listingType === 'DIRECT_OWNER' ? 'Enter vehicle owner name' : 'Enter bank or institution name'}
+              required
+              className="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:outline-none focus:border-red-500"
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-xs font-bold text-zinc-300 uppercase tracking-wider">
+              {listingType === 'DEALER' ? 'Dealer Phone Number' : listingType === 'DIRECT_OWNER' ? 'Owner Phone Number' : 'Bank Contact Phone Number'}
+            </label>
+            <input
+              type="tel"
+              value={sourcePhone}
+              onChange={(e) => setSourcePhone(e.target.value)}
+              placeholder="e.g. +254 700 000 000"
+              required
+              className="w-full px-4 py-3 rounded-xl bg-zinc-950 border border-zinc-800 text-white text-sm focus:outline-none focus:border-red-500"
+            />
           </div>
 
           <div className="space-y-1.5">

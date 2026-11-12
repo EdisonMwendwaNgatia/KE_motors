@@ -35,6 +35,8 @@ export interface Vehicle {
   location: string | null;
   description: string | null;
   listing_type: ListingType | string;
+  source_name: string | null;
+  source_phone: string | null;
   status: VehicleStatus | string;
   verification_status: VerificationStatus | string;
   is_featured: boolean;
